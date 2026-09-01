@@ -5,6 +5,7 @@ import {
   Route,
   Outlet,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
@@ -22,6 +23,13 @@ import OrderReview from "./pages/OrderReview";
 import ProductDetails from "./pages/ProductDetailed";
 import Wishlist from "./pages/Wishlist";
 import { WishlistProvider } from "./context/WishlistContext";
+
+// Admin Panel Imports
+import AdminLayout from "./admin/components/AdminLayout";
+import AdminProductsPage from "./admin/pages/AdminProductsPage";
+import AdminAddProductPage from "./admin/pages/AdminAddProductPage";
+import AdminEditProductPage from "./admin/pages/AdminEditProductPage";
+import AdminBarcodeViewerPage from "./admin/pages/AdminBarcodeViewerPage";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -47,6 +55,7 @@ function App() {
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
+          {/* Customer Panel Routes (includes Navbar/Footer) */}
           <Route element={<Layout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/brands/shine" element={<ShinePage />} />
@@ -61,8 +70,20 @@ function App() {
             <Route path="/manufacture" element={<Manufacture />} />
             <Route path="/order-review" element={<OrderReview />} />
             <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="*" element={<HomePage />} />
           </Route>
+
+          {/* Admin Panel Routes (isolated Layout) */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Navigate to="/admin/products" replace />} />
+            <Route path="products" element={<AdminProductsPage />} />
+            <Route path="products/add" element={<AdminAddProductPage />} />
+            <Route path="products/:id/edit" element={<AdminEditProductPage />} />
+            <Route path="products/:id/barcode" element={<AdminBarcodeViewerPage />} />
+            <Route path="*" element={<Navigate to="/admin/products" replace />} />
+          </Route>
+
+          {/* Catch-all for non-admin pages -> Home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </WishlistProvider>
@@ -70,3 +91,4 @@ function App() {
 }
 
 export default App;
+
