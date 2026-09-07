@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getBarcodeById, generateBarcode } from "../api/products";
+import { getBarcodeById, generateBarcode, generateQrCode } from "../api/products";
 
 function AdminBarcodeViewerPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [data, setData]             = useState(null);
-  const [loading, setLoading]       = useState(true);
-  const [error, setError]           = useState(null);
-  const [generating, setGenerating] = useState(false);
+  const [data, setData]                     = useState(null);
+  const [loading, setLoading]               = useState(true);
+  const [error, setError]                   = useState(null);
+  const [generatingBarcode, setGeneratingBarcode] = useState(false);
+  const [generatingQr, setGeneratingQr]           = useState(false);
+  const [copiedCode, setCopiedCode]         = useState(false);
+  const [copiedUrl, setCopiedUrl]           = useState(false);
 
   useEffect(() => {
-    async function loadBarcode() {
+    async function loadCodes() {
       try {
         const result = await getBarcodeById(id);
         setData(result);
@@ -22,11 +25,11 @@ function AdminBarcodeViewerPage() {
         setLoading(false);
       }
     }
-    loadBarcode();
+    loadCodes();
   }, [id]);
 
-  async function handleGenerate() {
-    setGenerating(true);
+  async function handleGenerateBarcode() {
+    setGeneratingBarcode(true);
     try {
       const result = await generateBarcode(id);
       setData((prev) => ({
@@ -38,60 +41,61 @@ function AdminBarcodeViewerPage() {
     } catch (err) {
       alert("❌ Failed to generate barcode: " + err.message);
     } finally {
-      setGenerating(false);
+      setGeneratingBarcode(false);
     }
   }
 
-  function handlePrint() {
-    if (!data?.barcodeUrl) return;
+  async function handleGenerateQrCode() {
+    setGeneratingQr(true);
+    try {
+      const result = await generateQrCode(id);
+      setData((prev) => ({
+        ...prev,
+        qrCodeUrl: result.qrCodeUrl,
+        targetUrl: result.targetUrl || prev?.targetUrl,
+      }));
+      alert("✅ QR Code generated successfully!");
+    } catch (err) {
+      alert("❌ Failed to generate QR code: " + err.message);
+    } finally {
+      setGeneratingQr(false);
+    }
+  }
 
-    const printWindow = window.open("", "_blank", "width=600,height=400");
+  function handlePrint(imageUrl, title, typeLabel) {
+    if (!imageUrl) return;
+
+    const printWindow = window.open("", "_blank", "width=750,height=600");
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Barcode – ${data.product.title}</title>
+          <title>${typeLabel} – ${title}</title>
           <style>
             body {
               display: flex;
-              flex-direction: column;
               align-items: center;
               justify-content: center;
               min-height: 100vh;
               margin: 0;
-              font-family: 'Poppins', sans-serif;
               background: #fff;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             }
-            .product-name {
-              font-size: 16px;
-              font-weight: 600;
-              margin-bottom: 12px;
-              color: #0a1230;
-              text-align: center;
-            }
-            .barcode-img {
-              max-width: 320px;
-              border: 1px solid #e6ddc9;
-              padding: 12px;
-              border-radius: 8px;
-            }
-            .code-text {
-              margin-top: 10px;
-              font-size: 11px;
-              color: #6b7280;
-              word-break: break-all;
-              text-align: center;
-              max-width: 320px;
+            .label-img {
+              max-width: 90%;
+              max-height: 90vh;
+              height: auto;
+              display: block;
+              box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             }
             @media print {
               body { margin: 0; }
+              .label-img { max-width: 100%; box-shadow: none; }
             }
           </style>
         </head>
         <body>
-          <div class="product-name">${data.product.title}</div>
-          <img class="barcode-img" src="${data.barcodeUrl}" alt="barcode" />
-          <div class="code-text">${data.codeValue}</div>
+          <img class="label-img" src="${imageUrl}" alt="${typeLabel}" />
           <script>
             window.onload = function() { window.print(); }
           </script>
@@ -101,19 +105,16 @@ function AdminBarcodeViewerPage() {
     printWindow.document.close();
   }
 
-  async function handleDownload() {
-    if (!data?.barcodeUrl) return;
+  async function handleDownload(imageUrl, defaultName) {
+    if (!imageUrl) return;
 
     try {
-      const response = await fetch(data.barcodeUrl);
+      const response = await fetch(imageUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-
-      const safeTitle = data.product.title.replace(/\s+/g, "_").toLowerCase();
-      a.download = `barcode_${safeTitle}.png`;
-
+      a.download = defaultName;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -123,11 +124,18 @@ function AdminBarcodeViewerPage() {
     }
   }
 
+  function handleCopy(text, setFlag) {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setFlag(true);
+    setTimeout(() => setFlag(false), 2000);
+  }
+
   if (loading) {
     return (
       <div className="admin-state-box">
         <div className="icon">⏳</div>
-        <p>Loading barcode...</p>
+        <p>Loading barcode & QR code...</p>
       </div>
     );
   }
@@ -144,74 +152,214 @@ function AdminBarcodeViewerPage() {
     );
   }
 
+  const safeTitle = (data?.product?.title || "product").replace(/\s+/g, "_").toLowerCase();
+  const customerPageUrl = data?.targetUrl || `${window.location.origin}/products/${data?.product?._id || id}`;
+
   return (
     <div>
-      <div className="admin-page-header">
-        <button
-          className="admin-btn admin-btn-outline admin-btn-sm"
-          onClick={() => navigate("/admin/products")}
-          style={{ marginBottom: 12 }}
-        >
-          ← Back to Products
-        </button>
-        <h1>Product Barcode</h1>
-        <p>View, print, or download the barcode for this product.</p>
+      <div className="admin-page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
+        <div>
+          <button
+            className="admin-btn admin-btn-outline admin-btn-sm"
+            onClick={() => navigate("/admin/products")}
+            style={{ marginBottom: 12 }}
+          >
+            ← Back to Products
+          </button>
+          <h1 style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span>Product Codes & Scanner Labels</span>
+          </h1>
+          <p>
+            Generate, print, and download 1D Barcodes (inventory & POS) and 2D QR Codes (direct customer product page).
+          </p>
+        </div>
+
+        <div style={{ display: "flex", gap: 10, alignSelf: "center" }}>
+          <a
+            href={customerPageUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="admin-btn admin-btn-outline admin-btn-sm"
+            style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+          >
+            🌐 Customer Product Page ↗
+          </a>
+        </div>
       </div>
 
-      <div className="admin-card admin-barcode-card">
-        <h2 style={{ fontSize: 20, marginBottom: 4, marginTop: 0 }}>{data.product.title}</h2>
-        <p style={{ fontSize: 13, color: "var(--admin-text-muted)", marginBottom: 20, marginTop: 0 }}>
-          {Array.isArray(data.product.brand) ? data.product.brand.join(", ") : data.product.brand}
+      {/* Product Summary Header */}
+      <div className="admin-card" style={{ marginBottom: 24, padding: "18px 24px" }}>
+        <h2 style={{ fontSize: 22, margin: 0, color: "var(--admin-royal)" }}>
+          {data.product.title}
+        </h2>
+        <p style={{ fontSize: 13, color: "var(--admin-text-muted)", margin: "4px 0 0 0" }}>
+          <strong>Brand:</strong> {Array.isArray(data.product.brand) ? data.product.brand.join(", ") : data.product.brand}
           &nbsp;·&nbsp;
-          {Array.isArray(data.product.category) ? data.product.category.join(", ") : data.product.category}
+          <strong>Category:</strong> {Array.isArray(data.product.category) ? data.product.category.join(", ") : data.product.category}
+          &nbsp;·&nbsp;
+          <strong>Product ID:</strong> <code style={{ fontSize: 12 }}>{data.product._id}</code>
         </p>
+      </div>
 
-        {data.barcodeUrl ? (
-          <>
-            <div className="admin-barcode-image-box">
-              <img
-                src={data.barcodeUrl}
-                alt={`Barcode for ${data.product.title}`}
-              />
+      {/* Side-by-side Grid: Barcode & QR Code */}
+      <div className="admin-codes-grid">
+        
+        {/* --- 1. BARCODE CARD --- */}
+        <div className="admin-card admin-code-card">
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+              <h3 style={{ fontSize: 18, margin: 0, display: "flex", alignItems: "center", gap: 8 }}>
+                🔲 1D Barcode (Code 128)
+              </h3>
+              <span className="admin-badge admin-badge-royal">POS / Warehouse</span>
             </div>
-
-            <p style={{ fontSize: 13, fontWeight: 500, marginBottom: 8, marginTop: 0 }}>
-              🔗 Code Value (what the barcode encodes):
+            <p style={{ fontSize: 13, color: "var(--admin-text-muted)", margin: "0 0 16px 0" }}>
+              Encodes product ID for POS scanners, inventory counting, and in-store lookup.
             </p>
-            <div className="admin-code-value-box">
-              {data.codeValue}
-            </div>
 
+            {data.barcodeUrl ? (
+              <>
+                <div className="admin-barcode-image-box">
+                  <img
+                    src={data.barcodeUrl}
+                    alt={`Barcode for ${data.product.title}`}
+                  />
+                </div>
+
+                <div style={{ fontSize: 12, fontWeight: 600, color: "var(--admin-text-muted)", marginBottom: 6 }}>
+                  🔗 ENCODED VALUE:
+                </div>
+                <div className="admin-code-value-box">
+                  <span className="admin-code-value-text" title={data.codeValue || data.product._id}>
+                    {data.codeValue || data.product._id}
+                  </span>
+                  <button 
+                    className="admin-copy-btn"
+                    onClick={() => handleCopy(data.codeValue || data.product._id, setCopiedCode)}
+                  >
+                    {copiedCode ? "✓ Copied" : "Copy"}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="admin-state-box" style={{ padding: "40px 0", minHeight: 240 }}>
+                <div className="icon">⚠️</div>
+                <p style={{ marginBottom: 16 }}>No barcode generated yet.</p>
+                <button 
+                  className="admin-btn admin-btn-primary" 
+                  onClick={handleGenerateBarcode}
+                  disabled={generatingBarcode}
+                >
+                  {generatingBarcode ? "Generating..." : "⚡ Generate Barcode Now"}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {data.barcodeUrl && (
             <div className="admin-barcode-actions">
-              <button className="admin-btn admin-btn-primary" onClick={handlePrint}>
+              <button 
+                className="admin-btn admin-btn-primary" 
+                onClick={() => handlePrint(data.barcodeUrl, data.product.title, "Barcode")}
+              >
                 🖨️ Print Barcode
               </button>
-              <button className="admin-btn admin-btn-gold" onClick={handleDownload}>
+              <button 
+                className="admin-btn admin-btn-gold" 
+                onClick={() => handleDownload(data.barcodeUrl, `barcode_${safeTitle}.png`)}
+              >
                 ⬇️ Download PNG
               </button>
               <button 
                 className="admin-btn admin-btn-outline" 
-                onClick={handleGenerate}
-                disabled={generating}
-                title="Regenerate barcode to apply the new short format without URL text"
+                onClick={handleGenerateBarcode}
+                disabled={generatingBarcode}
+                title="Regenerate barcode label image"
               >
-                {generating ? "Regenerating..." : "🔄 Regenerate Barcode"}
+                {generatingBarcode ? "Regenerating..." : "🔄 Regenerate"}
               </button>
             </div>
-          </>
-        ) : (
-          <div className="admin-state-box" style={{ padding: "40px 0" }}>
-            <div className="icon">⚠️</div>
-            <p style={{ marginBottom: 16 }}>No barcode found for this product.</p>
-            <button 
-              className="admin-btn admin-btn-primary" 
-              onClick={handleGenerate}
-              disabled={generating}
-            >
-              {generating ? "Generating..." : "⚡ Generate Barcode Now"}
-            </button>
+          )}
+        </div>
+
+        {/* --- 2. QR CODE CARD --- */}
+        <div className="admin-card admin-code-card">
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+              <h3 style={{ fontSize: 18, margin: 0, display: "flex", alignItems: "center", gap: 8 }}>
+                📱 2D QR Code
+              </h3>
+              <span className="admin-badge admin-badge-gold">Customer Redirect</span>
+            </div>
+            <p style={{ fontSize: 13, color: "var(--admin-text-muted)", margin: "0 0 16px 0" }}>
+              Scanning with any smartphone camera instantly opens this product's customer page.
+            </p>
+
+            {data.qrCodeUrl ? (
+              <>
+                <div className="admin-barcode-image-box">
+                  <img
+                    src={data.qrCodeUrl}
+                    alt={`QR Code for ${data.product.title}`}
+                  />
+                </div>
+
+                <div style={{ fontSize: 12, fontWeight: 600, color: "var(--admin-text-muted)", marginBottom: 6 }}>
+                  🌐 TARGET CUSTOMER URL:
+                </div>
+                <div className="admin-code-value-box">
+                  <span className="admin-code-value-text" title={customerPageUrl}>
+                    {customerPageUrl}
+                  </span>
+                  <button 
+                    className="admin-copy-btn"
+                    onClick={() => handleCopy(customerPageUrl, setCopiedUrl)}
+                  >
+                    {copiedUrl ? "✓ Copied" : "Copy URL"}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="admin-state-box" style={{ padding: "40px 0", minHeight: 240 }}>
+                <div className="icon">📱</div>
+                <p style={{ marginBottom: 16 }}>No QR Code generated yet for this product.</p>
+                <button 
+                  className="admin-btn admin-btn-gold" 
+                  onClick={handleGenerateQrCode}
+                  disabled={generatingQr}
+                >
+                  {generatingQr ? "Generating..." : "⚡ Generate QR Code Now"}
+                </button>
+              </div>
+            )}
           </div>
-        )}
+
+          {data.qrCodeUrl && (
+            <div className="admin-barcode-actions">
+              <button 
+                className="admin-btn admin-btn-gold" 
+                onClick={() => handlePrint(data.qrCodeUrl, data.product.title, "QR Code")}
+              >
+                🖨️ Print QR Code
+              </button>
+              <button 
+                className="admin-btn admin-btn-primary" 
+                onClick={() => handleDownload(data.qrCodeUrl, `qrcode_${safeTitle}.png`)}
+              >
+                ⬇️ Download PNG
+              </button>
+              <button 
+                className="admin-btn admin-btn-outline" 
+                onClick={handleGenerateQrCode}
+                disabled={generatingQr}
+                title="Regenerate QR code label image"
+              >
+                {generatingQr ? "Regenerating..." : "🔄 Regenerate"}
+              </button>
+            </div>
+          )}
+        </div>
+
       </div>
     </div>
   );

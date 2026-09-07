@@ -22,7 +22,9 @@ import ProductPage from "./pages/ProductPage";
 import OrderReview from "./pages/OrderReview";
 import ProductDetails from "./pages/ProductDetailed";
 import Wishlist from "./pages/Wishlist";
+import BarcodeScannerPage from "./pages/BarcodeScannerPage";
 import { WishlistProvider } from "./context/WishlistContext";
+import { CartProvider } from "./context/CartContext";
 
 // Admin Panel Imports
 import AdminLayout from "./admin/components/AdminLayout";
@@ -52,40 +54,44 @@ const Layout = () => (
 function App() {
   return (
     <WishlistProvider>
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          {/* Customer Panel Routes (includes Navbar/Footer) */}
-          <Route element={<Layout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/brands/shine" element={<ShinePage />} />
-            <Route path="/products" element={<ProductPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/brands/royal-luxury" element={<RoyalLuxuryPage />} />
-            <Route path="/products/:id" element={<ProductDetails />} />
-            <Route path="/distributor" element={<Distributor />} />
-            <Route path="/bulk-quote" element={<BulkQuote />} />
-            <Route path="/contact" element={<ContactUs />} />
-            <Route path="/manufacture" element={<Manufacture />} />
-            <Route path="/order-review" element={<OrderReview />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-          </Route>
+      <CartProvider>
+        <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
+            {/* Customer Panel Routes (includes Navbar/Footer) */}
+            <Route element={<Layout />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/brands/shine" element={<ShinePage />} />
+              <Route path="/products" element={<ProductPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/brands/royal-luxury" element={<RoyalLuxuryPage />} />
+              <Route path="/products/:id" element={<ProductDetails />} />
+              <Route path="/distributor" element={<Distributor />} />
+              <Route path="/bulk-quote" element={<BulkQuote />} />
+              <Route path="/contact" element={<ContactUs />} />
+              <Route path="/manufacture" element={<Manufacture />} />
+              <Route path="/order-review" element={<OrderReview />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/scan" element={<BarcodeScannerPage />} />
+              <Route path="/barcode-scanner" element={<BarcodeScannerPage />} />
+            </Route>
 
-          {/* Admin Panel Routes (isolated Layout) */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Navigate to="/admin/products" replace />} />
-            <Route path="products" element={<AdminProductsPage />} />
-            <Route path="products/add" element={<AdminAddProductPage />} />
-            <Route path="products/:id/edit" element={<AdminEditProductPage />} />
-            <Route path="products/:id/barcode" element={<AdminBarcodeViewerPage />} />
-            <Route path="*" element={<Navigate to="/admin/products" replace />} />
-          </Route>
+            {/* Admin Panel Routes (isolated Layout) */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Navigate to="/admin/products" replace />} />
+              <Route path="products" element={<AdminProductsPage />} />
+              <Route path="products/add" element={<AdminAddProductPage />} />
+              <Route path="products/:id/edit" element={<AdminEditProductPage />} />
+              <Route path="products/:id/barcode" element={<AdminBarcodeViewerPage />} />
+              <Route path="*" element={<Navigate to="/admin/products" replace />} />
+            </Route>
 
-          {/* Catch-all for non-admin pages -> Home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
+            {/* Catch-all for non-admin pages -> Home */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </CartProvider>
     </WishlistProvider>
   );
 }

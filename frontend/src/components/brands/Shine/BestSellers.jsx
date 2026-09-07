@@ -1,20 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import vector1 from "../../../assets/Vector (1).svg";
 import group56 from "../../../assets/Group 56.svg";
 import intersect from "../../../assets/Intersect.svg";
+import { getProducts } from "../../../api/products";
+import { useWishlist } from "../../../context/WishlistContext";
 
 const serif = "'Playfair Display', Georgia, serif";
 const sans = "'Poppins', 'Segoe UI', sans-serif";
 
-const PRODUCTS = [
-  { id: "detergent-powder", title: "Detergent Powder", image: group56, tint: "#F5F3F6" },
-  { id: "dish-washer", title: "Dish Washer", image: intersect, tint: "#E7DED3" },
-  { id: "detergent-powder-2", title: "Detergent Powder", image: group56, tint: "#F5F3F6" },
-  { id: "dish-washer-2", title: "Dish Washer", image: intersect, tint: "#E7DED3" },
+const DEFAULT_PRODUCTS = [
+  { id: "detergent-powder", title: "Detergent Powder", image: group56, tint: "#F5F3F6", moq: "500 pcs", lead: "7–10 days", desc: "Nail Polish is the best things in the world and were for protection. i love…" },
+  { id: "dish-washer", title: "Dish Washer", image: intersect, tint: "#E7DED3", moq: "500 pcs", lead: "7–10 days", desc: "Nail Polish is the best things in the world and were for protection. i love…" },
+  { id: "detergent-powder-2", title: "Detergent Powder", image: group56, tint: "#F5F3F6", moq: "500 pcs", lead: "7–10 days", desc: "Nail Polish is the best things in the world and were for protection. i love…" },
+  { id: "dish-washer-2", title: "Dish Washer", image: intersect, tint: "#E7DED3", moq: "500 pcs", lead: "7–10 days", desc: "Nail Polish is the best things in the world and were for protection. i love…" },
 ];
-
-const DESC = "Nail Polish is the best things in the world and were for protection. i love…";
 
 /* ---------- icons (matched to Figma originals) ---------- */
 
@@ -61,23 +61,32 @@ const Arrow = () => (
 
 /* ---------- card ---------- */
 function BestSellerCard({ p }) {
-  const [liked, setLiked] = useState(false);
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const productId = p._id || p.id;
+  const liked = productId ? isInWishlist(productId) : false;
+
+  const targetLink = productId && !String(productId).startsWith("detergent-") && !String(productId).startsWith("dish-")
+    ? `/products/${productId}`
+    : `/products?brand=Shine`;
+
   return (
-    <Link to={`/products/${p.id}`} className="bs-card">
+    <div className="bs-card">
       {/* media */}
-      <div className="bs-media" style={{ backgroundColor: p.tint }}>
+      <div className="bs-media" style={{ backgroundColor: p.tint || "#F5F3F6" }}>
         <span className="bs-badge"><Spark /> BEST SELLER</span>
         <button
           type="button"
           aria-label="Add to wishlist"
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setLiked(!liked); }}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (productId) toggleWishlist(productId); }}
           className="bs-wish"
         >
           <Heart filled={liked} />
         </button>
 
         {/* image: rest 1.065 → hover 1 (zoom out) */}
-        <img className="bs-img" src={p.image} alt={p.title} loading="lazy" />
+        <Link to={targetLink} style={{ display: 'block', width: '100%', height: '100%' }}>
+          <img className="bs-img" src={p.image} alt={p.title} loading="lazy" />
+        </Link>
 
         {/* golden arc */}
         <svg className="bs-arc" viewBox="0 -8 371 94" preserveAspectRatio="none" aria-hidden="true">
@@ -88,15 +97,17 @@ function BestSellerCard({ p }) {
 
       {/* body */}
       <div className="bs-body">
-        <h3 className="bs-name">{p.title}</h3>
-        <p className="bs-desc">{DESC}</p>
+        <Link to={targetLink} style={{ textDecoration: 'none' }}>
+          <h3 className="bs-name">{p.title}</h3>
+        </Link>
+        <p className="bs-desc">{p.desc || p.description || DEFAULT_PRODUCTS[0].desc}</p>
 
         <div className="bs-meta">
           <div className="bs-meta-item">
             <span className="bs-meta-ico"><BoxIcon /></span>
             <span>
               <span className="bs-meta-label">MOQ</span>
-              <span className="bs-meta-value">500 pcs</span>
+              <span className="bs-meta-value">{p.moq || "500 pcs"}</span>
             </span>
           </div>
           <span className="bs-div" />
@@ -104,22 +115,51 @@ function BestSellerCard({ p }) {
             <span className="bs-meta-ico"><CalIcon /></span>
             <span>
               <span className="bs-meta-label">Lead Time</span>
-              <span className="bs-meta-value">7–10 days</span>
+              <span className="bs-meta-value">{p.lead || p.leadTime || "7–10 days"}</span>
             </span>
           </div>
         </div>
 
-        <span className="bs-cta">
+        <Link to={targetLink} className="bs-cta" style={{ textDecoration: 'none' }}>
           View Products
           <span className="bs-cta-arrow"><Arrow /></span>
-        </span>
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 }
 
 /* ---------- section ---------- */
 export default function BestSellers() {
+  const [productsList, setProductsList] = useState(DEFAULT_PRODUCTS);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadShineBestSellers() {
+      try {
+        const res = await getProducts({ brand: 'Shine', limit: 4 });
+        if (isMounted && res?.products?.length > 0) {
+          const tints = ["#F5F3F6", "#E7DED3", "#F5F3F6", "#E7DED3"];
+          const mapped = res.products.map((p, idx) => ({
+            _id: p._id || p.id,
+            id: p._id || p.id,
+            title: p.title,
+            desc: p.desc,
+            image: p.image || DEFAULT_PRODUCTS[idx % DEFAULT_PRODUCTS.length].image,
+            tint: tints[idx % tints.length],
+            moq: p.moq,
+            lead: p.lead,
+          }));
+          setProductsList(mapped);
+        }
+      } catch (err) {
+        // fallback to default
+      }
+    }
+    loadShineBestSellers();
+    return () => { isMounted = false; };
+  }, []);
+
   return (
     <section id="shine-best-sellers" className="bs-sec">
       <style>{`
@@ -141,7 +181,7 @@ export default function BestSellers() {
         .bs-media{position:relative;display:block;height:17.7083vw;overflow:hidden;background:#ffffff;
           border-radius:0.5208vw 0.5208vw 0 0;}
 
-        .bs-img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;
+        .bs-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
           transform:scale(1.065);transform-origin:top center;
           transition:transform .8s cubic-bezier(.22,.61,.36,1);}
         .bs-card:hover .bs-img{transform:scale(1);}
@@ -192,7 +232,7 @@ export default function BestSellers() {
         @media (max-width:1023px){
           .bs-grid{grid-template-columns:repeat(2,1fr);width:90vw;}
           .bs-eyebrow{font-size:1.2vw;} .bs-title{font-size:2.6vw;}
-          /* ✅ font AND line-height scale together — no collapsed lines */
+          /* font AND line-height scale together — no collapsed lines */
           .bs-sub{font-size:1.3vw;line-height:2vw;}
           .bs-sub br{display:none;}
           .bs-squiggle{width:12vw;margin:0 auto;}
@@ -234,8 +274,8 @@ export default function BestSellers() {
       </header>
 
       <div className="bs-grid">
-        {PRODUCTS.map((p, i) => (
-          <BestSellerCard key={`${p.id}-${i}`} p={p} />
+        {productsList.map((p, i) => (
+          <BestSellerCard key={p._id || p.id || `${i}`} p={p} />
         ))}
       </div>
     </section>

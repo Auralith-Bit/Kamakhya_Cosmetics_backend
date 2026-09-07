@@ -15,6 +15,7 @@ import imgFeature2 from "../../assets/manufactureAssets/QualitySection/love-expe
 import imgFeature3 from "../../assets/manufactureAssets/QualitySection/love-trusted-ingredients.png";
 import imgFeature4 from "../../assets/manufactureAssets/QualitySection/love-sustainable-practices.png";
 import shineLogo from "../../assets/manufactureAssets/QualitySection/shine.png";
+// eslint-disable-next-line no-unused-vars
 import { contentMax, fluid, pagePadX, s } from "./figmaScale";
 
 /* ═══════════════════════════════════════════════════════════

@@ -11,29 +11,39 @@ const TrashIcon = () => (
   </svg>
 );
 
-const CartItem = ({ item }) => {
+const CartItem = ({ item, onRemove, onQuantityChange }) => {
+  const itemKey = item.variantKey || item.id;
+  const unitLabel = item.unitPrice ? `NRs. ${Number(item.unitPrice).toFixed(2)} / unit` : '';
+
   return (
     <div className="flex items-start gap-3 py-4 border-b border-gray-100 last:border-b-0">
       <div className="w-[56px] h-[56px] rounded-lg overflow-hidden shrink-0 bg-[#f0e6d6] flex items-center justify-center">
-        <img
-          src={item.image}
-          alt={item.name}
-          className="w-full h-full object-cover"
-        />
+        {item.image ? (
+          <img
+            src={item.image}
+            alt={item.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-xs font-bold text-[#2E3192]">
+            KM
+          </div>
+        )}
       </div>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h4 className="m-0 text-[14px] font-semibold text-gray-800 leading-snug">
+            <h4 className="m-0 text-[14px] font-semibold text-gray-800 leading-snug truncate">
               {item.name}
             </h4>
             <p className="m-0 text-[12px] text-gray-400 mt-0.5">{item.size}</p>
           </div>
           <button
             type="button"
+            onClick={() => onRemove && onRemove(itemKey)}
             aria-label={`Remove ${item.name}`}
-            className="flex items-center justify-center w-7 h-7 rounded-md border-none bg-transparent cursor-pointer shrink-0 hover:bg-red-50"
+            className="flex items-center justify-center w-7 h-7 rounded-md border-none bg-transparent cursor-pointer shrink-0 hover:bg-red-50 transition-colors"
           >
             <TrashIcon />
           </button>
@@ -41,13 +51,17 @@ const CartItem = ({ item }) => {
 
         <div className="flex items-center justify-between gap-2 mt-2">
           <div className="flex items-center gap-3">
-            <QuantityControl quantity={item.quantity} />
+            <QuantityControl
+              quantity={item.quantity}
+              onIncrease={() => onQuantityChange && onQuantityChange(itemKey, item.quantity + 1)}
+              onDecrease={() => onQuantityChange && onQuantityChange(itemKey, item.quantity - 1)}
+            />
             <p className="m-0 text-[12px] text-gray-400">
-              {item.quantity} * {item.unitPrice?.toLocaleString()} = {item.totalUnits?.toLocaleString()} units
+              {item.quantity} {item.quantity > 1 ? 'batches' : 'batch'} ({Number(item.totalUnits || 0).toLocaleString()} units)
             </p>
           </div>
           <span className="text-[14px] font-bold text-brand-blue whitespace-nowrap">
-            NRs. {item.price.toLocaleString()}.00
+            NRs. {Number(item.price || 0).toLocaleString()}.00
           </span>
         </div>
       </div>

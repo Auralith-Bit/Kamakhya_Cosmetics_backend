@@ -7,6 +7,7 @@ import {
   imgFacilityIcon3,
   imgFacilityIcon4,
 } from "../../assets/figmaAssets";
+// eslint-disable-next-line no-unused-vars
 import { contentMax, fluid, pagePadX, s } from "./figmaScale";
 
 const FEATURES = [

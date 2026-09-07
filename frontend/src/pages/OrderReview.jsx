@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 const BANNER_TOP_SPACE = 40;    
 const BANNER_BOTTOM_SPACE = 40;  
@@ -19,7 +20,7 @@ const BoxIcon = () => (
   </svg>
 );
 
-const PRODUCTS = [
+const DEMO_PRODUCTS = [
   { name: "Botanical Resurfacing Serum", meta: "30ml . 3 × 500 = 1,500 units", price: "NRs. 3,860.00" },
   { name: "Botanical Resurfacing Serum", meta: "30ml . 3 × 500 = 1,500 units", price: "NRs. 3,860.00" },
   { name: "Revitalizing Night Cream",    meta: "50ml . 2 × 750 = 1,500 units", price: "NRs. 4,200.00" },
@@ -38,6 +39,19 @@ const STEPS = [
 
 const OrderReview = () => {
   const navigate = useNavigate();
+  const { cartItems, subtotal, shipping, total } = useCart();
+
+  const displayProducts = cartItems.length > 0
+    ? cartItems.map((item) => ({
+        name: item.name,
+        meta: `${item.size} (${Number(item.totalUnits || 0).toLocaleString()} units)`,
+        price: `NRs. ${Number(item.price || 0).toLocaleString()}.00`,
+      }))
+    : DEMO_PRODUCTS;
+
+  const displaySubtotal = cartItems.length > 0 ? `NRs. ${Number(subtotal).toLocaleString()}` : "NRs. 16,720";
+  const displayShipping = cartItems.length > 0 ? `NRs. ${Number(shipping).toLocaleString()}` : "NRs. 500";
+  const displayTotal = cartItems.length > 0 ? `NRs. ${Number(total).toLocaleString()}.00` : "NRs. 9,760.00";
 
   const handleContinueShopping = () => {
     navigate("/products");
@@ -439,7 +453,7 @@ const OrderReview = () => {
                 <BoxIcon />
               </div>
 
-              {PRODUCTS.map((p, i) => (
+              {displayProducts.map((p, i) => (
                 <div className="or-item" key={i}>
                   <div className="or-item-row">
                     <span className="n">{p.name}</span>
@@ -450,13 +464,13 @@ const OrderReview = () => {
               ))}
 
               <div className="or-sum">
-                <div className="or-sum-row"><span>Sub Total</span><span>NRs. 16,720</span></div>
-                <div className="or-sum-row"><span>Shipping</span><span>NRs. 500</span></div>
+                <div className="or-sum-row"><span>Sub Total</span><span>{displaySubtotal}</span></div>
+                <div className="or-sum-row"><span>Shipping</span><span>{displayShipping}</span></div>
               </div>
 
               <div className="or-total">
                 <span className="t">Total</span>
-                <span className="v">NRs. 9,760.00</span>
+                <span className="v">{displayTotal}</span>
               </div>
               <p className="or-total-note">Final invoice issued after review</p>
             </div>

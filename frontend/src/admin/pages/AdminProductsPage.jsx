@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getProducts, deleteProduct } from "../api/products";
+import BarcodeScannerModal from "../../components/BarcodeScanner/BarcodeScannerModal";
 
 function AdminProductsPage() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ function AdminProductsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [scannerOpen, setScannerOpen] = useState(false);
 
   const [deleteModal, setDeleteModal] = useState({ open: false, productId: null, productName: "" });
   const [deleting, setDeleting] = useState(false);
@@ -60,9 +62,18 @@ function AdminProductsPage() {
           <h1>Products</h1>
           <p>Manage all products, view barcodes, edit or delete entries.</p>
         </div>
-        <button className="admin-btn admin-btn-primary" onClick={() => navigate("/admin/products/add")}>
-          ➕ Add Product
-        </button>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <button 
+            className="admin-btn admin-btn-gold" 
+            onClick={() => setScannerOpen(true)}
+            title="Scan a product barcode using camera or photo"
+          >
+            📷 Scan Barcode
+          </button>
+          <button className="admin-btn admin-btn-primary" onClick={() => navigate("/admin/products/add")}>
+            ➕ Add Product
+          </button>
+        </div>
       </div>
 
       {loading && (
@@ -99,7 +110,7 @@ function AdminProductsPage() {
                     <th>Brand</th>
                     <th>Category</th>
                     <th>MOQ</th>
-                    <th>Barcode</th>
+                    <th>Codes</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -124,31 +135,53 @@ function AdminProductsPage() {
                       <td>{Array.isArray(product.category) ? product.category.join(", ") : product.category}</td>
                       <td>{product.moq}</td>
                       <td>
-                        {product.barcode ? (
-                          <img
-                            src={product.barcode}
-                            alt="barcode"
-                            style={{
-                              height: "40px",
-                              objectFit: "contain",
-                              backgroundColor: "white",
-                              padding: "2px",
-                              borderRadius: "4px",
-                              border: "1px solid var(--admin-border)",
-                            }}
-                          />
-                        ) : (
-                          <span className="admin-badge admin-badge-orange">⏳ None</span>
-                        )}
+                        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                          {product.barcode ? (
+                            <img
+                              src={product.barcode}
+                              alt="barcode"
+                              title="Barcode ready"
+                              style={{
+                                height: "36px",
+                                width: "50px",
+                                objectFit: "contain",
+                                backgroundColor: "white",
+                                padding: "2px",
+                                borderRadius: "4px",
+                                border: "1px solid var(--admin-border)",
+                              }}
+                            />
+                          ) : (
+                            <span className="admin-badge admin-badge-orange" title="No barcode">⏳ Barcode</span>
+                          )}
+                          {product.qrCode ? (
+                            <img
+                              src={product.qrCode}
+                              alt="QR code"
+                              title="QR Code ready"
+                              style={{
+                                height: "36px",
+                                width: "36px",
+                                objectFit: "contain",
+                                backgroundColor: "white",
+                                padding: "2px",
+                                borderRadius: "4px",
+                                border: "1px solid var(--admin-border)",
+                              }}
+                            />
+                          ) : (
+                            <span className="admin-badge admin-badge-orange" title="No QR code">⏳ QR</span>
+                          )}
+                        </div>
                       </td>
                       <td>
                         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                           <button
                             className="admin-btn admin-btn-gold admin-btn-sm"
                             onClick={() => navigate(`/admin/products/${product._id}/barcode`)}
-                            title="View Barcode"
+                            title="View Barcode & QR Code"
                           >
-                            🔲 Barcode
+                            🔲 Barcode & QR
                           </button>
                           <button
                             className="admin-btn admin-btn-outline admin-btn-sm"
@@ -215,6 +248,11 @@ function AdminProductsPage() {
           </div>
         </div>
       )}
+
+      <BarcodeScannerModal 
+        isOpen={scannerOpen} 
+        onClose={() => setScannerOpen(false)} 
+      />
     </div>
   );
 }

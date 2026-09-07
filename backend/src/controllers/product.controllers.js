@@ -70,10 +70,11 @@ const updateProduct = async (req, res) => {
     }
 }
 
-// Get barcode info for a product (used by admin CMS panel)
+// Get barcode & QR code info for a product (used by admin CMS panel)
 const getBarcodeById = async (req, res) => {
     try {
-        const data = await productServices.getBarcodeById(req.params.id);
+        const clientOrigin = req.query.clientUrl || req.headers.origin || req.headers.referer;
+        const data = await productServices.getBarcodeById(req.params.id, clientOrigin);
         res.status(200).json(data);
     } catch (error) {
         res.status(error.statusCode || 404).json({ message: error.message });
@@ -90,4 +91,35 @@ const generateAndSaveBarcode = async (req, res) => {
     }
 };
 
-export default { getProducts, createProduct, getProductById, deleteProduct, updateProduct, getBarcodeById, generateAndSaveBarcode }
+// Generate and save QR code for an existing product (used by admin CMS panel)
+const generateAndSaveQrCode = async (req, res) => {
+    try {
+        const clientOrigin = req.body?.clientUrl || req.query?.clientUrl || req.headers.origin || req.headers.referer;
+        const data = await productServices.generateAndSaveQrCode(req.params.id, clientOrigin);
+        res.status(200).json({ message: "QR Code generated successfully", ...data });
+    } catch (error) {
+        res.status(error.statusCode || 500).json({ message: error.message });
+    }
+};
+
+// Lookup product by scanned barcode or QR code
+const lookupByBarcode = async (req, res) => {
+    try {
+        const product = await productServices.lookupProductByBarcode(req.params.code);
+        res.status(200).json({ success: true, product });
+    } catch (error) {
+        res.status(error.statusCode || 404).json({ success: false, message: error.message });
+    }
+};
+
+export default { 
+    getProducts, 
+    createProduct, 
+    getProductById, 
+    deleteProduct, 
+    updateProduct, 
+    getBarcodeById, 
+    generateAndSaveBarcode,
+    generateAndSaveQrCode,
+    lookupByBarcode
+};

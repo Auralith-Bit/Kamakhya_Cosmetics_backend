@@ -16,9 +16,12 @@ router.post(
     productControllers.createProduct
 );
 
-// Barcode route must come BEFORE /:id so "barcode" is not treated as an ID
+// Barcode & QR Code scan & lookup routes must come BEFORE /:id
+router.get("/barcode/scan/:code", productControllers.lookupByBarcode);
 router.get("/:id/barcode", productControllers.getBarcodeById);
 router.post("/:id/barcode", productControllers.generateAndSaveBarcode);
+router.get("/:id/qrcode", productControllers.getBarcodeById);
+router.post("/:id/qrcode", productControllers.generateAndSaveQrCode);
 
 router.get("/:id", productControllers.getProductById);
 

@@ -8,6 +8,7 @@ import imgCertBadge2 from "../../assets/manufactureAssets/ceritification/iconFac
 import imgCertBadge3 from "../../assets/manufactureAssets/ceritification/iconSearchCheck.svg";
 import imgCertBadge4 from "../../assets/manufactureAssets/ceritification/iconEarthLeaf.svg";
 import imgWaveDecor from "../../assets/manufactureAssets/ceritification/decorSquiggle.svg";
+// eslint-disable-next-line no-unused-vars
 import { contentMax, fluid, pagePadX, s } from "./figmaScale";
 
 /* ═══════════════════════════════════════════════════════════

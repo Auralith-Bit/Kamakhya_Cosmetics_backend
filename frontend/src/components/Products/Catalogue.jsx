@@ -1,13 +1,15 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { Search, Heart, ArrowRight, Headphones, SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
-import { Link, useSearchParams } from 'react-router'
-import { products } from '../../data/product'
+import { Link, useSearchParams } from 'react-router-dom'
+import { products as staticProducts } from '../../data/product'
+import { getProducts } from '../../api/products'
+import { useWishlist } from '../../context/WishlistContext'
 
 const brands = ['Royal Luxury', 'Shine']
 
 const RoyalCategories = [
     'Hair Care', 'Face Care', 'Lip Care',
-    'Sun Care', 'Body Care',
+    'Sun Care', 'Body Care', 'Fragrances'
 ]
 
 const ShineCategories = [
@@ -27,7 +29,6 @@ const categoriesByBrand = {
 const productTypes = ['Featured', 'Best Seller', 'Signatured Products']
 
 const PRODUCTS_PER_PAGE = 12
-
 
 /*
   Single-select filter section.
@@ -82,68 +83,79 @@ const NeedHelpBox = () => (
         <p className="text-xs text-gray-500 mb-3">
             We're here for your business sourcing needs.
         </p>
-        <Link to='/contact-us' className="border border-orange-300 text-orange-500 text-xs font-medium rounded-full px-4 py-2">
+        <Link to='/contact' className="border border-orange-300 text-orange-500 text-xs font-medium rounded-full px-4 py-2 inline-block">
             CONTACT US
         </Link>
     </div>
 )
 
-const ProductCard = ({ product }) => (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
-        <div className="relative">
-            <span className="absolute top-3 left-3 bg-white/90 text-[10px] font-semibold tracking-wide px-3 py-1 rounded-full text-[#CCA466]">
-                {product.tag}
-            </span>
-            {/* Heart button sits above the card-wide Link so it stays independently clickable */}
-            <button
-                onClick={(e) => e.stopPropagation()}
-                className="absolute top-3 right-3 z-10 bg-white rounded-full p-1.5 shadow"
-                aria-label="Save product"
-            >
-                <Heart className="w-4 h-4 text-gray-500" />
-            </button>
+const ProductCard = ({ product }) => {
+    const { isInWishlist, toggleWishlist } = useWishlist()
+    const productId = product._id || product.id
+    const saved = isInWishlist(productId)
 
-            {/* Whole media + text block is clickable, routes to the product detail page */}
-            <Link to={`/products/${product.id}`} className="block">
-                <img
-                    src={product.image}
-                    alt={product.title}
-                    className="w-full h-full object-cover"
-                />
-            </Link>
-        </div>
+    return (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
+            <div className="relative">
+                <span className="absolute top-3 left-3 bg-white/90 text-[10px] font-semibold tracking-wide px-3 py-1 rounded-full text-[#CCA466]">
+                    {product.tag}
+                </span>
+                {/* Heart button sits above the card-wide Link so it stays independently clickable */}
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        toggleWishlist(productId)
+                    }}
+                    className={`absolute top-3 right-3 z-10 bg-white rounded-full p-1.5 shadow transition-colors ${
+                        saved ? 'text-[#E38F2E]' : 'text-gray-500 hover:text-[#E38F2E]'
+                    }`}
+                    aria-label={saved ? `Remove ${product.title} from wishlist` : `Add ${product.title} to wishlist`}
+                >
+                    <Heart className="w-4 h-4" fill={saved ? 'currentColor' : 'none'} />
+                </button>
 
-        <div className="p-4">
-            <Link to={`/products/${product.id}`}>
-                <h4 className="text-center font-serif text-gray-800 mb-1 hover:text-[#2E3192] transition">
-                    {product.title}
-                </h4>
-            </Link>
-            <p className="text-center text-xs text-gray-500 mb-3 line-clamp-2">
-                {product.desc}
-            </p>
-
-            <div className="flex justify-center gap-6 text-xs text-gray-600 mb-4">
-                <div className="text-center">
-                    <p className="text-[#CCA466]">MOQ</p>
-                    <p className="font-medium">{product.moq}</p>
-                </div>
-                <div className="text-center">
-                    <p className="text-[#CCA466]">Lead Time</p>
-                    <p className="font-medium">{product.lead}</p>
-                </div>
+                {/* Whole media + text block is clickable, routes to the product detail page */}
+                <Link to={`/products/${productId}`} className="block">
+                    <img
+                        src={product.image}
+                        alt={product.title}
+                        className="w-full h-64 object-cover"
+                    />
+                </Link>
             </div>
 
-            <Link
-                to={`/products/${product.id}`}
-                className="w-full flex items-center justify-center gap-2 border border-[#2E3192] text-[#2E3192] rounded-full py-2 text-sm font-medium hover:bg-[#2E3192] hover:text-white transition"
-            >
-                View Products
-                <ArrowRight className="w-4 h-4" />
-            </Link>
+            <div className="p-4">
+                <Link to={`/products/${productId}`}>
+                    <h4 className="text-center font-serif text-gray-800 mb-1 hover:text-[#2E3192] transition">
+                        {product.title}
+                    </h4>
+                </Link>
+                <p className="text-center text-xs text-gray-500 mb-3 line-clamp-2">
+                    {product.desc}
+                </p>
+
+                <div className="flex justify-center gap-6 text-xs text-gray-600 mb-4">
+                    <div className="text-center">
+                        <p className="text-[#CCA466]">MOQ</p>
+                        <p className="font-medium">{product.moq}</p>
+                    </div>
+                    <div className="text-center">
+                        <p className="text-[#CCA466]">Lead Time</p>
+                        <p className="font-medium">{product.lead}</p>
+                    </div>
+                </div>
+
+                <Link
+                    to={`/products/${productId}`}
+                    className="w-full flex items-center justify-center gap-2 border border-[#2E3192] text-[#2E3192] rounded-full py-2 text-sm font-medium hover:bg-[#2E3192] hover:text-white transition"
+                >
+                    View Products
+                    <ArrowRight className="w-4 h-4" />
+                </Link>
+            </div>
         </div>
-    </div>
-)
+    )
+}
 
 // Builds a page-number list with ellipsis, e.g. [1, 3, 4, '...', 10]
 const getPageNumbers = (current, total) => {
@@ -215,6 +227,9 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 const Catalogue = () => {
     const [searchParams] = useSearchParams()
 
+    const [dbProducts, setDbProducts] = useState([])
+    const [loading, setLoading] = useState(true)
+
     const [search, setSearch] = useState('')
 
     // Single-select state per filter group: '' means "no filter applied"
@@ -226,9 +241,43 @@ const Catalogue = () => {
     const [filtersOpen, setFiltersOpen] = useState(false)
     const [currentPage, setCurrentPage] = useState(1)
 
+    // Load live products from backend
+    useEffect(() => {
+        let isMounted = true
+        async function fetchAll() {
+            setLoading(true)
+            try {
+                const res = await getProducts({ limit: 100 })
+                if (isMounted) {
+                    if (res?.products?.length > 0) {
+                        setDbProducts(res.products)
+                    } else {
+                        setDbProducts(staticProducts)
+                    }
+                }
+            } catch (err) {
+                if (isMounted) {
+                    setDbProducts(staticProducts)
+                }
+            } finally {
+                if (isMounted) setLoading(false)
+            }
+        }
+        fetchAll()
+        return () => { isMounted = false }
+    }, [])
+
+    // Sync brand/category if query params change
+    useEffect(() => {
+        const brandParam = searchParams.get('brand')
+        const catParam = searchParams.get('category')
+        if (brandParam) setSelectedBrand(brandParam)
+        if (catParam) setSelectedCategory(catParam)
+    }, [searchParams])
+
     // Which category list shows in the sidebar depends on the selected brand.
     // No brand selected -> empty list (user picks a brand first).
-    const currentCategories = selectedBrand ? categoriesByBrand[selectedBrand] : []
+    const currentCategories = selectedBrand ? categoriesByBrand[selectedBrand] || [] : []
 
     // Toggles a single-select group: clicking the active value clears it,
     // clicking a new value replaces whatever was selected before.
@@ -260,27 +309,32 @@ const Catalogue = () => {
     const activeFilterCount =
         (selectedBrand ? 1 : 0) + (selectedCategory ? 1 : 0) + (selectedType ? 1 : 0)
 
+    const allProductList = dbProducts.length > 0 ? dbProducts : staticProducts
+
     const filteredProducts = useMemo(() => {
-        let result = products.filter((p) => {
-            const matchesSearch = p.title.toLowerCase().includes(search.toLowerCase())
-            const matchesBrand = !selectedBrand || p.brand === selectedBrand
-            const matchesCategory = !selectedCategory || p.category === selectedCategory
-            const matchesType = !selectedType || p.type === selectedType
+        let result = allProductList.filter((p) => {
+            const matchesSearch = (p.title || "").toLowerCase().includes(search.toLowerCase())
+            const pBrand = Array.isArray(p.brand) ? p.brand.join(" ") : (p.brand || "")
+            const matchesBrand = !selectedBrand || pBrand.toLowerCase().includes(selectedBrand.toLowerCase())
+            const pCategory = Array.isArray(p.category) ? p.category.join(" ") : (p.category || "")
+            const matchesCategory = !selectedCategory || pCategory.toLowerCase().includes(selectedCategory.toLowerCase())
+            const pType = Array.isArray(p.type) ? p.type.join(" ") : (p.type || "")
+            const matchesType = !selectedType || pType.toLowerCase().includes(selectedType.toLowerCase())
             return matchesSearch && matchesBrand && matchesCategory && matchesType
         })
 
         if (sortBy === 'newest') {
-            result = [...result].sort((a, b) => b.id - a.id)
+            result = [...result].sort((a, b) => (new Date(b.createdAt || 0)) - (new Date(a.createdAt || 0)))
         } else if (sortBy === 'oldest') {
-            result = [...result].sort((a, b) => a.id - b.id)
+            result = [...result].sort((a, b) => (new Date(a.createdAt || 0)) - (new Date(b.createdAt || 0)))
         } else if (sortBy === 'az') {
-            result = [...result].sort((a, b) => a.title.localeCompare(b.title))
+            result = [...result].sort((a, b) => (a.title || "").localeCompare(b.title || ""))
         } else if (sortBy === 'za') {
-            result = [...result].sort((a, b) => b.title.localeCompare(a.title))
+            result = [...result].sort((a, b) => (b.title || "").localeCompare(a.title || ""))
         }
 
         return result
-    }, [search, selectedBrand, selectedCategory, selectedType, sortBy])
+    }, [allProductList, search, selectedBrand, selectedCategory, selectedType, sortBy])
 
     const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE) || 1
 
@@ -399,7 +453,7 @@ const Catalogue = () => {
                                 setSortBy(e.target.value)
                                 setCurrentPage(1)
                             }}
-                            className="border border-gray-200 rounded-lg px-3 py-1.5 text-[##333333]"
+                            className="border border-gray-200 rounded-lg px-3 py-1.5 text-[#333333]"
                         >
                             <option value="newest">Newest first</option>
                             <option value="oldest">Oldest first</option>
@@ -409,13 +463,18 @@ const Catalogue = () => {
                     </div>
                 </div>
 
-                {filteredProducts.length === 0 ? (
+                {loading ? (
+                    <div className="py-20 flex flex-col items-center justify-center gap-3">
+                        <div className="w-8 h-8 border-3 border-[#2E3192] border-t-transparent rounded-full animate-spin"></div>
+                        <p className="text-xs text-gray-500 font-poppins">Loading catalogue...</p>
+                    </div>
+                ) : filteredProducts.length === 0 ? (
                     <p className="text-center text-gray-500 py-16">No products match your filters.</p>
                 ) : (
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                             {paginatedProducts.map((product) => (
-                                <ProductCard key={product.id} product={product} />
+                                <ProductCard key={product._id || product.id} product={product} />
                             ))}
                         </div>
 

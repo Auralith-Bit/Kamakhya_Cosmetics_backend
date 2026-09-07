@@ -55,6 +55,9 @@ const productSchema = new mongoose.Schema({
     },
     barcode: {
         type: String
+    },
+    qrCode: {
+        type: String
     }
 }, { timestamps: true });
 const Product = mongoose.model("Product", productSchema);

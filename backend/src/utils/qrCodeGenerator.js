@@ -1,7 +1,7 @@
 import bwipjs from "bwip-js";
 import sharp from "sharp";
 
-function wrapText(text, maxCharsPerLine = 44) {
+function wrapText(text, maxCharsPerLine = 36) {
     const words = String(text || "").trim().split(/\s+/);
     const lines = [];
     let currentLine = "";
@@ -27,44 +27,42 @@ const escapeXml = (str) =>
         .replace(/'/g, "&apos;");
 
 /**
- * Generates a full barcode label image containing:
+ * Generates a full QR Code label image containing:
  * - Solid white background
  * - Outer card border
  * - Product Title
  * - Brand Name
- * - Black Barcode bars
- * - Barcode Number text
+ * - Centered high-resolution QR Code
+ * - Scan hint / Target link indicator
  * 
- * @param {string} text - The code value to encode in the barcode
+ * @param {string} url - The customer product URL to encode in the QR code
  * @param {object} metadata - Optional metadata { title, brand, width, height }
  * @returns {Promise<Buffer>} PNG image buffer
  */
-const generateBarcode = async (text, metadata = {}) => {
-    const { title = "", brand = "", width = 700, height = 440 } = metadata;
+export const generateQrCode = async (url, metadata = {}) => {
+    const { title = "", brand = "", width = 600, height = 620 } = metadata;
     const brandText = Array.isArray(brand) ? brand.join(", ") : (brand || "N/A");
     const titleText = title || "Product Name";
-    const codeValue = text || "";
+    const targetUrl = url || "";
 
-    // 1. Generate clean barcode bars (bwip-js)
-    const barcodeBuffer = await bwipjs.toBuffer({
-        bcid: "code128",
-        text: codeValue,
-        scale: 3,
-        height: 16,
+    // 1. Generate clean high-res QR code image buffer (bwip-js)
+    const qrBuffer = await bwipjs.toBuffer({
+        bcid: "qrcode",
+        text: targetUrl,
+        scale: 6,
         includetext: false,
         backgroundcolor: "ffffff",
         barcolor: "000000",
-        paddingwidth: 0,
-        paddingheight: 0,
+        paddingwidth: 1,
+        paddingheight: 1,
     });
 
-    const barcodeBase64 = `data:image/png;base64,${barcodeBuffer.toString("base64")}`;
+    const qrBase64 = `data:image/png;base64,${qrBuffer.toString("base64")}`;
 
     const safeBrand = escapeXml(brandText);
-    const safeCode = escapeXml(codeValue);
 
     // Support 1 or 2 lines for title if long
-    const titleLines = wrapText(titleText, 44).slice(0, 2);
+    const titleLines = wrapText(titleText, 36).slice(0, 2);
     const isMultiLineTitle = titleLines.length > 1;
 
     // Layout positioning
@@ -73,10 +71,14 @@ const generateBarcode = async (text, metadata = {}) => {
     const divider1Y = isMultiLineTitle ? 88 : 64;
     const brandY = divider1Y + 30;
     const divider2Y = brandY + 16;
-    const barcodeY = divider2Y + 14;
-    const barcodeHeight = 180;
-    const codeTextY = barcodeY + barcodeHeight + 22;
-    const totalCalculatedHeight = Math.max(height, codeTextY + 28);
+    
+    // QR Code display area
+    const qrSize = 340;
+    const qrX = (width - qrSize) / 2;
+    const qrY = divider2Y + 18;
+    
+    const hintY = qrY + qrSize + 28;
+    const totalCalculatedHeight = Math.max(height, hintY + 28);
 
     const titleSvg = isMultiLineTitle
         ? `
@@ -93,12 +95,12 @@ const generateBarcode = async (text, metadata = {}) => {
     <svg width="${width}" height="${totalCalculatedHeight}" viewBox="0 0 ${width} ${totalCalculatedHeight}" xmlns="http://www.w3.org/2000/svg">
       <style>
         .bg { fill: #ffffff; }
-        .border-box { fill: #ffffff; stroke: #111111; stroke-width: 2.5; rx: 8px; }
+        .border-box { fill: #ffffff; stroke: #111111; stroke-width: 2.5; rx: 10px; }
         .divider { stroke: #111111; stroke-width: 1.8; }
         .field-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #000000; }
         .field-val { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; font-weight: 500; fill: #111111; }
         .brand-val { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; font-weight: 600; fill: #000000; }
-        .code-num { font-family: 'Consolas', 'Courier New', Courier, monospace, sans-serif; font-size: 17px; font-weight: 700; fill: #000000; letter-spacing: 3px; text-anchor: middle; }
+        .hint-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 14px; font-weight: 600; fill: #555555; text-anchor: middle; letter-spacing: 0.5px; }
       </style>
 
       <!-- Outer Canvas Background -->
@@ -120,15 +122,15 @@ const generateBarcode = async (text, metadata = {}) => {
       <!-- Divider 2 -->
       <line x1="16" y1="${divider2Y}" x2="${width - 16}" y2="${divider2Y}" class="divider" />
 
-      <!-- Barcode Image -->
-      <image x="32" y="${barcodeY}" width="${width - 64}" height="${barcodeHeight}" href="${barcodeBase64}" preserveAspectRatio="xMidYMid meet" />
+      <!-- QR Code Image -->
+      <image x="${qrX}" y="${qrY}" width="${qrSize}" height="${qrSize}" href="${qrBase64}" preserveAspectRatio="xMidYMid meet" />
 
-      <!-- Barcode Number text directly underneath -->
-      <text x="${width / 2}" y="${codeTextY}" class="code-num">${safeCode}</text>
+      <!-- Scan Instruction directly underneath -->
+      <text x="${width / 2}" y="${hintY}" class="hint-text">📱 Scan with phone camera to view product</text>
     </svg>
     `;
 
     return await sharp(Buffer.from(svg)).png().toBuffer();
 };
 
-export default generateBarcode;
+export default generateQrCode;

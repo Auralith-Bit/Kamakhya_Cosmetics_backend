@@ -39,7 +39,13 @@ export const WishlistProvider = ({ children }) => {
 
   return (
     <WishlistContext.Provider
-      value={{ wishlistIds, isInWishlist, toggleWishlist, removeFromWishlist }}
+      value={{
+        wishlistIds,
+        wishlistCount: wishlistIds.length,
+        isInWishlist,
+        toggleWishlist,
+        removeFromWishlist,
+      }}
     >
       {children}
     </WishlistContext.Provider>

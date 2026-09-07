@@ -1,4 +1,4 @@
-﻿import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import b1 from '../../assets/b1.png';
 import b2 from '../../assets/b2.png';
 
@@ -20,6 +20,7 @@ const TEAM = [
 ];
 
 const SCROLL_TEAM = [...TEAM, ...TEAM];
+// eslint-disable-next-line no-unused-vars
 const CARDS_PER_VIEW = 5;
 const TOTAL_PAGES = 2;
 

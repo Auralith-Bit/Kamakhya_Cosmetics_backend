@@ -12,6 +12,7 @@ import iconLab from "../../assets/manufactureAssets/lab.svg";
 import iconSetting from "../../assets/manufactureAssets/setting.svg";
 import iconBox from "../../assets/manufactureAssets/Box.svg";
 import iconTruck from "../../assets/manufactureAssets/truck.svg";
+// eslint-disable-next-line no-unused-vars
 import { contentMax, fluid, pagePadX, s, SCALE } from "./figmaScale";
 
 /* ═══════════════════════════════════════════════════════════

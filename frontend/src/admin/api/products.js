@@ -53,9 +53,10 @@ export async function deleteProduct(id) {
 }
 
 export async function getBarcodeById(id) {
-  const response = await fetch(`${BASE_URL}/products/${id}/barcode`);
+  const clientUrl = window.location.origin;
+  const response = await fetch(`${BASE_URL}/products/${id}/barcode?clientUrl=${encodeURIComponent(clientUrl)}`);
   if (!response.ok) {
-    throw new Error("Failed to fetch barcode");
+    throw new Error("Failed to fetch barcode and QR code data");
   }
   return response.json();
 }
@@ -67,6 +68,22 @@ export async function generateBarcode(id) {
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message || "Failed to generate barcode");
+  }
+  return response.json();
+}
+
+export async function generateQrCode(id) {
+  const clientUrl = window.location.origin;
+  const response = await fetch(`${BASE_URL}/products/${id}/qrcode`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ clientUrl }),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to generate QR code");
   }
   return response.json();
 }

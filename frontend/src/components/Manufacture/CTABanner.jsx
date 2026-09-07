@@ -1,5 +1,6 @@
 import { imgQuoteIcon } from "../../assets/figmaAssets";
 import { useNavigate } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
 import { contentMax, fluid, pagePadX, s } from "./figmaScale";
 
 /* ═══════════════════════════════════════════════════════════

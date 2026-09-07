@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
+import { useWishlist } from "../../context/WishlistContext";
+import { useCart } from "../../context/CartContext";
 import logo from "../../assets/Group 9.png";
 import RLimage from "../../assets/RLimage.png";      // ✅ Royal Luxury logo
 import Shineimage from "../../assets/Shineimage.png"; // ✅ Shine logo
@@ -103,12 +105,14 @@ const BrandsDropdown = ({ open, onClose, anchors }) => {
 
 /* ================= navbar ================= */
 const Navbar = () => {
-  const [cartCount] = useState(1);
-  const [wishlistCount] = useState(1);
+  const { wishlistIds } = useWishlist();
+  const { cartCount } = useCart();
+  const wishlistCount = wishlistIds ? wishlistIds.length : 0;
   const [searchValue, setSearchValue] = useState("");
   const [brandsOpen, setBrandsOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  // eslint-disable-next-line no-unused-vars
   const navigate = useNavigate();
   const desktopBrandsRef = useRef(null);
   const mobileBrandsRef = useRef(null);
@@ -395,10 +399,8 @@ const Navbar = () => {
         </ul>
 
         <div className="kn-actions">
-          <span className="kn-vline" />
-
           <Link to="/wishlist">
-            <button className="kn-iconbtn" title="Wishlist" aria-label="Wishlist">
+            <button className="kn-iconbtn" title="Wishlist" aria-label={`Wishlist (${wishlistCount} items)`}>
               <svg
                 viewBox="0 0 24 24"
                 width="23"
@@ -411,7 +413,7 @@ const Navbar = () => {
               >
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
-              <span className="kn-badge">{wishlistCount}</span>
+              {wishlistCount > 0 && <span className="kn-badge">{wishlistCount}</span>}
             </button>
           </Link>
 
@@ -419,7 +421,7 @@ const Navbar = () => {
             <button
               className="kn-iconbtn"
               title="Cart"
-              aria-label="Shopping cart"
+              aria-label={`Shopping cart (${cartCount} items)`}
             >
               <svg
                 viewBox="0 0 24 24"
@@ -435,7 +437,7 @@ const Navbar = () => {
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
-              <span className="kn-badge">{cartCount}</span>
+              {cartCount > 0 && <span className="kn-badge">{cartCount}</span>}
             </button>
           </Link>
 
@@ -461,7 +463,7 @@ const Navbar = () => {
 
         <div className="kn-actions-mobile">
           <Link to="/wishlist">
-            <button className="kn-iconbtn" title="Wishlist" aria-label="Wishlist">
+            <button className="kn-iconbtn" title="Wishlist" aria-label={`Wishlist (${wishlistCount} items)`}>
               <svg
                 viewBox="0 0 24 24"
                 width="20"
@@ -474,14 +476,14 @@ const Navbar = () => {
               >
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
-              <span className="kn-badge">{wishlistCount}</span>
+              {wishlistCount > 0 && <span className="kn-badge">{wishlistCount}</span>}
             </button>
           </Link>
           <Link to="/checkout">
             <button
               className="kn-iconbtn"
               title="Cart"
-              aria-label="Shopping cart"
+              aria-label={`Shopping cart (${cartCount} items)`}
             >
               <svg
                 viewBox="0 0 24 24"
@@ -497,7 +499,7 @@ const Navbar = () => {
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
-              <span className="kn-badge">{cartCount}</span>
+              {cartCount > 0 && <span className="kn-badge">{cartCount}</span>}
             </button>
           </Link>
         </div>
