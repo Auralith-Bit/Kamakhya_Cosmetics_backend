@@ -1,132 +1,204 @@
-import { useState } from 'react'
-import Product from '../../assets/Product.svg'
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
-import Curve from '../../assets/Curve.svg'
-import { Link } from 'react-router'
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import catImg from "../../assets/Product.svg";
+import Curve from "../../assets/Curve.svg";          // ✅ gold squiggle (replaces vector1)
 
-const ShopByCategory = () => {
-    const categories = [
-        { image: Product, title: "Body Care", count: "18+ Products" },
-        { image: Product, title: "Skin Care", count: "24+ Products" },
-        { image: Product, title: "Hair Care", count: "15+ Products" },
-        { image: Product, title: "Makeup", count: "30+ Products" },
-        { image: Product, title: "Fragrance", count: "12+ Products" },
-        { image: Product, title: "Abcd Care", count: "40+ Products" },
-        { image: Product, title: "Skin Care", count: "24+ Products" },
-        { image: Product, title: "Lipstick", count: "15+ Products" },
-        { image: Product, title: "Pramit", count: "50+ Products" },
-        { image: Product, title: "Okay", count: "12+ Products" },
-        { image: Product, title: "Body Care", count: "18+ Products" },
-        { image: Product, title: "Skin Care", count: "24+ Products" },
-        { image: Product, title: "Hair Care", count: "15+ Products" },
-        { image: Product, title: "Makeup", count: "30+ Products" },
-        { image: Product, title: "Fragrance", count: "12+ Products" },
-        { image: Product, title: "Abcd Care", count: "40+ Products" },
-        { image: Product, title: "Skin Care", count: "24+ Products" },
-        { image: Product, title: "Lipstick", count: "15+ Products" },
-        { image: Product, title: "Pramit", count: "50+ Products" },
-        { image: Product, title: "Okay", count: "12+ Products" },
-        { image: Product, title: "Body Care", count: "18+ Products" },
-        { image: Product, title: "Skin Care", count: "24+ Products" }
+const serif = "'Playfair Display', Georgia, serif";
+const sans = "'Poppins', 'Segoe UI', sans-serif";
 
-    ];
+/* ✅ each category can have its own product photo — swap catImg for real bottle shots */
+const CATS = [
+  { name: "Body Care",  count: "18+ Products", img: catImg },
+  { name: "Body Care",   count: "18+ Products",  img: catImg },
+  { name: "Body Care", count: "18+ Products", img: catImg },
+  { name: "Body Care",        count: "18+ Products", img: catImg },
+  { name: "Body Care",  count: "18+ Products",  img: catImg },
+];
+const SLOTS = ["pc-c1", "pc-c2", "pc-c3", "pc-c4", "pc-c5"];
+const DOTS = [0, 1, 2, 3];
 
-    const itemsPerPage = 5;
-    const pageCount = Math.ceil(categories.length / itemsPerPage);
-    const [currentPage, setCurrentPage] = useState(0);
+const Arrow = () => (
+  <svg viewBox="0 0 18 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M0 6h15" /><path d="m11.5 1 5 5-5 5" />
+  </svg>
+);
+const ChevL = () => (
+  <svg viewBox="0 0 9 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M7.5 1.5 2 7l5.5 5.5" />
+  </svg>
+);
+const ChevR = () => (
+  <svg viewBox="0 0 9 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m1.5 1.5 6 5.5-6 5.5" />
+  </svg>
+);
 
-    const handlePrev = () => {
-        setCurrentPage((prev) => (prev === 0 ? pageCount - 1 : prev - 1));
-    };
+const ProductCategories = () => {
+  const [items, setItems] = useState(CATS);
+  const [dot, setDot] = useState(1);
 
-    const handleNext = () => {
-        setCurrentPage((prev) => (prev === pageCount - 1 ? 0 : prev + 1));
-    };
+  const next = () => { setItems(a => [...a.slice(1), a[0]]); setDot(d => (d + 1) % DOTS.length); };
+  const prev = () => { setItems(a => [a[a.length - 1], ...a.slice(0, -1)]); setDot(d => (d + DOTS.length - 1) % DOTS.length); };
 
-    const visibleCategories = categories.slice(
-        currentPage * itemsPerPage,
-        currentPage * itemsPerPage + itemsPerPage
-    );
+  return (
+    <section id="shine-categories" className="pc-sec">
+      <style>{`
+        /* ================= DESKTOP (>1280): ORIGINAL, UNTOUCHED ================= */
+        .pc-sec{position:relative;width:100%;height:42.6563vw;background:#FCF9F2;overflow:hidden;}
 
-    return (
-        <section className='bg-[#FCF9F2]'>
-            <div className="page-container section-spacing">
-                <div className='flex flex-col justify-center items-center text-center'>
-                    <h2 className='text-orange-300'>SHOP BY CATEGORY </h2>
-                    <p className='text-2xl text-[#2E3192]'>Luxury for Every Beauty Ritual</p>
-                    <img src={Curve} alt="arrowline" />
-                    <p className='text-[#666666] max-w-2xl'>
-                        Explore Royal Luxury collections across skincare, haircare, makeup, body care, and
-                        premium beauty essentials.
-                    </p>
-                </div>
+        .pc-head{position:absolute;left:0;top:0;width:100%;text-align:center;}
+        
+        .pc-tag{position:absolute;top:3.0104vw;width:100%;color:#E38F2E;
+        font-family:${sans};font-size:0.88vw;font-weight:600;letter-spacing:0.18em;}
+        
+        .pc-title{position:absolute;top:4.6vw;width:100%;color:#2E3192;
+        font-family:${serif};font-size:1.7vw;font-weight:700;line-height:1.2;}
+        
+        .pc-sub{
+        position:absolute;
+        top:9vw;
+        width:100%;
+        color:#666666;
+        font-family:${sans};
+        font-size:0.95vw;
+        line-height:1.5;
+        }
+        
+        /* ✅ squiggle moved BELOW the paragraph (was between title and sub) */
+        
+        .pc-vector{position:absolute;top:7.2vw;left:50%;transform:translateX(-50%);
+          width:10vw;height:auto;}
 
-                <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 sm:gap-5 mt-8'>
-                    {visibleCategories.map((category, index) => (
-                        <Link
-                            key={index}
-                            to="/products"
-                            className='group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300'
-                        >
-                            <div className='relative w-full h-40 sm:h-48 lg:h-60 overflow-hidden'>
-                                <img
-                                    src={category.image}
-                                    alt={category.title}
-                                    loading="lazy"
-                                    className='w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-110'
-                                />
-                                <div className='absolute inset-0 bg-gray-900/0 group-hover:bg-gray-900/15 transition-colors duration-300' />
-                            </div>
+        /* ✅ cards are now <Link> anchors */
+        .pc-card{position:absolute;top:14.2708vw;width:15.1042vw;height:20.0521vw;
+          background:#fff;border-radius:0.5208vw;overflow:hidden;
+          box-shadow:0 0.4167vw 0.625vw rgba(0,0,0,0.08), 0 1.0417vw 1.3021vw rgba(0,0,0,0.05);
+          animation:pc-in .45s ease;
+          display:block;text-decoration:none;cursor:pointer;
+          transition:box-shadow .35s ease;
+        }
+        @keyframes pc-in{from{opacity:0;transform:translateX(1.5vw);}to{opacity:1;transform:none;}}
 
-                            <div className='flex justify-between items-center px-3 sm:px-4 py-2.5 sm:py-3'>
-                                <div className='text-left min-w-0'>
-                                    <p className='font-semibold text-gray-800 text-sm truncate'>{category.title}</p>
-                                    <p className='text-xs text-gray-500'>{category.count}</p>
-                                </div>
-                                <ArrowRight className='w-4 h-4 shrink-0 text-[#2E3192]' />
-                            </div>
-                        </Link>
-                    ))}
-                </div>
+        /* ✅ dark wide-spreading hover shadow — no card movement */
+        .pc-card:hover{
+          box-shadow:
+            0 0.5208vw 1.0417vw rgba(0,0,0,0.16),
+            0 1.5625vw 3.125vw rgba(43,46,126,0.30);
+        }
 
-                {/* Pagination / Slider controls */}
-                {pageCount > 1 && (
-                    <div className='flex justify-center items-center gap-4 mt-10'>
-                        <button
-                            onClick={handlePrev}
-                            aria-label="Previous"
-                            className='w-9 h-9 rounded-full border border-[#2E3192]/30 flex items-center justify-center text-[#2E3192] hover:bg-[#2E3192]/10 transition-colors'
-                        >
-                            <ChevronLeft className='w-4 h-4' />
-                        </button>
+        .pc-c1{left:8.8542vw;}
+        .pc-c2{left:25.651vw;}
+        .pc-c3{left:42.4479vw;}
+        .pc-c4{left:59.2448vw;}
+        .pc-c5{left:76.0417vw;}
 
-                        <div className='flex items-center gap-2'>
-                            {Array.from({ length: pageCount }).map((_, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => setCurrentPage(index)}
-                                    aria-label={`Go to page ${index + 1}`}
-                                    className={`h-2.5 rounded-full transition-all duration-300 ${
-                                        index === currentPage
-                                            ? 'w-8 bg-[#2E3192]'
-                                            : 'w-5 bg-[#2E3192]/20'
-                                    }`}
-                                />
-                            ))}
-                        </div>
+        .pc-img{position:absolute;top:0;left:0;width:100%;height:15.1042vw;
+          object-fit:cover;border-radius:0.5208vw 0.5208vw 0 0;display:block;
+          transition:transform .5s ease;}
+        .pc-card:hover .pc-img{transform:scale(1.06);}
 
-                        <button
-                            onClick={handleNext}
-                            aria-label="Next"
-                            className='w-9 h-9 rounded-full border border-[#2E3192]/30 flex items-center justify-center text-[#2E3192] hover:bg-[#2E3192]/10 transition-colors'
-                        >
-                            <ChevronRight className='w-4 h-4' />
-                        </button>
-                    </div>
-                )}
-            </div>
-        </section>
-    )
-}
+        .pc-name{position:absolute;left:1.0417vw;top:16.5104vw;color:#2E3192;
+          font-family:${serif};font-size:1.0417vw;font-weight:700;}
+        .pc-count{position:absolute;left:1.0417vw;top:18.0729vw;color:#666666;
+          font-family:${sans};font-size:0.7292vw;}
+        .pc-arrow{position:absolute;right:1.0677vw;top:16.4063vw;width:2.2917vw;height:2.2917vw;
+          border-radius:50%;display:flex;align-items:center;justify-content:center;
+          background:#F5F5FA;color:#2E3192;transition:background .3s ease;}
+        .pc-arrow svg{width:0.8854vw;height:0.5208vw;transition:transform .3s ease;}
+        .pc-card:hover .pc-arrow{background:#E4E4F0;}
+        .pc-card:hover .pc-arrow svg{transform:rotate(-45deg);}
 
-export default ShopByCategory
+        .pc-nav{position:absolute;top:36.4583vw;width:2.5vw;height:2.5vw;border-radius:50%;
+          background:#F5F5FA;border:0.1042vw solid #A1A2CE;color:#2E3192;
+          display:flex;align-items:center;justify-content:center;cursor:pointer;
+          transition:border-color .3s;}
+        .pc-nav:hover{border-color:#2E3192;}
+        .pc-nav svg{width:0.4688vw;height:0.7292vw;}
+        .pc-nav.prev{left:39.7917vw;}
+        .pc-nav.next{left:57.7083vw;}
+        .pc-dots{position:absolute;left:46.0156vw;top:37.3438vw;display:flex;align-items:center;gap:0.5729vw;}
+        .pc-dot{width:1.1979vw;height:0.625vw;border-radius:0.3125vw;background:#CBCCE4;
+          border:0.1042vw solid #7779B8;padding:0;cursor:pointer;transition:all .3s;}
+        .pc-dot.active{width:2.6042vw;height:0.7292vw;border-radius:0.3646vw;
+          background:#2E3192;border:none;}
+
+        /* ============ ≤1280: design-order header, bigger type, tight controls ============ */
+        @media (max-width:1280px){
+          .pc-sec{height:auto;display:grid;grid-template-columns:1fr auto 1fr;
+            column-gap:3vw;row-gap:5vw;padding:8vw 6vw;}
+
+          .pc-head{position:static;grid-column:1/-1;grid-row:1;
+            display:flex;flex-direction:column;align-items:center;text-align:center;}
+          .pc-tag{position:static;order:1;font-size:clamp(12px, 1.4vw, 18px);}
+          .pc-title{position:static;order:2;font-size:clamp(26px, 3.4vw, 48px);margin-top:1.5vw;}
+          .pc-sub{position:static;order:3;font-size:clamp(13px, 1.8vw, 22px);
+            line-height:1.6;margin-top:2vw;max-width:92%;}
+          .pc-sub br{display:none;}
+          /* ✅ squiggle stays last on mobile too */
+          .pc-vector{position:static;order:4;transform:none;display:block;
+            width:clamp(90px, 17vw, 220px);margin:2vw auto 0;}
+
+          .pc-card{position:relative;top:0;left:0;grid-column:1/-1;grid-row:2;
+            justify-self:center;width:min(55vw, 480px);height:auto;}
+          .pc-c1{left:0;}
+          .pc-c2,.pc-c3,.pc-c4,.pc-c5{display:none;}
+
+          .pc-img{position:static;width:100%;height:auto;aspect-ratio:1/1;
+            border-radius:1.2vw 1.2vw 0 0;}
+          .pc-name{position:static;font-size:clamp(14px, 1.7vw, 21px);margin:2.5vw 2.5vw 1vw;}
+          .pc-count{position:static;font-size:clamp(11px, 1.25vw, 15px);margin:0 2.5vw 3.5vw;}
+          .pc-arrow{top:auto;right:2.5vw;bottom:2.5vw;
+            width:clamp(40px, 5vw, 54px);height:clamp(40px, 5vw, 54px);}
+          .pc-arrow svg{width:clamp(14px, 2vw, 22px);height:auto;}
+
+          /* ✅ mobile hover — same dark spread, no movement */
+          .pc-card:hover{
+            box-shadow:
+              0 6px 14px rgba(0,0,0,0.15),
+              0 16px 32px rgba(43,46,126,0.28);
+          }
+
+          .pc-nav{position:static;width:clamp(40px, 6vw, 72px);height:clamp(40px, 6vw, 72px);}
+          .pc-nav svg{width:clamp(9px, 1.3vw, 16px);height:auto;}
+          .pc-nav.prev{grid-column:1;grid-row:3;justify-self:end;}
+          .pc-nav.next{grid-column:3;grid-row:3;justify-self:start;}
+          .pc-dots{position:static;grid-column:2;grid-row:3;justify-self:center;}
+          .pc-dot{width:clamp(9px, 1.2vw, 14px);height:clamp(5px, 0.8vw, 9px);}
+          .pc-dot.active{width:clamp(20px, 2.6vw, 30px);height:clamp(6px, 0.9vw, 10px);}
+        }
+      `}</style>
+
+      <div className="pc-head">
+        <p className="pc-tag">SHOP BY CATEGORY</p>
+        <h2 className="pc-title">Luxury for Every Beauty Ritual</h2>
+        <p className="pc-sub">
+            Explore Royal Luxury collections across skincare, haircare, makeup, body care , and premium
+           <br/>
+           beauty essentials.
+        </p>
+        {/* ✅ gold squiggle now BELOW the paragraph (per design) */}
+        <img className="pc-vector" src={Curve} alt="" aria-hidden="true" />
+      </div>
+
+      {/* ✅ each card is a Link → /products */}
+      {items.map((c, i) => (
+        <Link to="/products" className={`pc-card ${SLOTS[i]}`} key={c.name}>
+          {c.img && <img className="pc-img" src={c.img} alt={`Shine ${c.name}`} />}
+          <p className="pc-name">{c.name}</p>
+          <p className="pc-count">{c.count}</p>
+          <span className="pc-arrow"><Arrow /></span>
+        </Link>
+      ))}
+
+      <button className="pc-nav prev" aria-label="Previous" onClick={prev}><ChevL /></button>
+      <div className="pc-dots">
+        {DOTS.map(i => (
+          <button key={i} className={`pc-dot${dot === i ? " active" : ""}`} aria-label={`Page ${i + 1}`} onClick={() => setDot(i)} />
+        ))}
+      </div>
+      <button className="pc-nav next" aria-label="Next" onClick={next}><ChevR /></button>
+    </section>
+  );
+};
+
+export default ProductCategories;

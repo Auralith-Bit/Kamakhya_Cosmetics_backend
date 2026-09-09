@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useWishlist } from '../../context/WishlistContext';
 import nailPolish1 from '../../assets/nailpolish.jpg';
 import lipstick from '../../assets/lipstick.jpg';
 import oil from '../../assets/oil.jpg';
 import wash from '../../assets/wash.jpg';
 import { getProducts } from '../../api/products';
-import { useWishlist } from '../../context/WishlistContext';
 
 const DEFAULT_PRODUCTS = [
   {
-    id: 'nail-polish-dior',
+    id: 2,
     name: 'Nail Polish',
     description: 'Nail Polish is the best things in the world and were for protection. i love...',
     image: nailPolish1,
@@ -19,7 +19,7 @@ const DEFAULT_PRODUCTS = [
     category: 'Face Care',
   },
   {
-    id: 'nail-polish-lancome',
+    id: 5,
     name: 'Nail Polish',
     description: 'Nail Polish is the best things in the world and were for protection. i love...',
     image: lipstick,
@@ -29,7 +29,7 @@ const DEFAULT_PRODUCTS = [
     category: 'Face Care',
   },
   {
-    id: 'detergent-powder',
+    id: 16,
     name: 'Detergent Powder',
     description: 'Nail Polish is the best things in the world and were for protection. i love...',
     image: oil,
@@ -39,7 +39,7 @@ const DEFAULT_PRODUCTS = [
     category: 'Laundry',
   },
   {
-    id: 'dish-washer',
+    id: 12,
     name: 'Dish Washer',
     description: 'Nail Polish is the best things in the world and were for protection. i love...',
     image: wash,
@@ -61,7 +61,6 @@ const FeaturedCollection = () => {
     let isMounted = true;
     async function loadFeatured() {
       try {
-        // Try getting featured products or top 4 products
         const res = await getProducts({ limit: 4 });
         if (isMounted && res?.products?.length > 0) {
           const mapped = res.products.slice(0, 4).map((p, idx) => ({
@@ -172,7 +171,6 @@ const FeaturedCollection = () => {
                 overflow: 'hidden',
                 height: '100%',
               }}
-              /* ── HOVER: image zooms out (goes in), original fills area, returns on leave ── */
               onMouseEnter={e => {
                 const img = e.currentTarget.querySelector('.card-img');
                 if (img) img.style.transform = 'scale(1)';
@@ -261,7 +259,7 @@ const FeaturedCollection = () => {
                   }}
                   aria-label={saved ? "Remove from wishlist" : "Add to wishlist"}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill={saved ? "#2E3192" : "none"} stroke="#2E3192" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill={saved ? "#E38F2E" : "none"} stroke={saved ? "#E38F2E" : "#2E3192"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                   </svg>
                 </button>
@@ -388,7 +386,7 @@ const FeaturedCollection = () => {
 
                 {/* View Products button */}
                 <Link
-                  to={product.id && !product.id.startsWith("nail-") && !product.id.startsWith("detergent-") && !product.id.startsWith("dish-") ? `/products/${product.id}` : `/products?brand=${encodeURIComponent(product.brand)}&category=${encodeURIComponent(product.category)}`}
+                  to={product.id && typeof product.id === 'string' && product.id.length === 24 ? `/products/${product.id}` : `/products?brand=${encodeURIComponent(product.brand)}&category=${encodeURIComponent(product.category)}`}
                   className="no-underline transition-colors"
                   style={{
                     position: 'relative',
@@ -410,12 +408,13 @@ const FeaturedCollection = () => {
                     flexShrink: 0,
                     textDecoration: 'none',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#EEF0FB'; e.currentTarget.style.color = '#2E3192'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = '#FFF'; e.currentTarget.style.color = '#2E3192'; }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#EEF0FB'; e.currentTarget.style.color = '#2E3192'; const arrow = e.currentTarget.querySelector('.btn-arrow'); if (arrow) arrow.style.transform = 'translateY(-50%) translateX(4px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#FFF'; e.currentTarget.style.color = '#2E3192'; const arrow = e.currentTarget.querySelector('.btn-arrow'); if (arrow) arrow.style.transform = 'translateY(-50%)'; }}
                 >
                   <span style={{ whiteSpace: 'nowrap' }}>View Products</span>
 
                   <span
+                    className="btn-arrow"
                     style={{
                       position: 'absolute',
                       right: '10px',
@@ -430,6 +429,7 @@ const FeaturedCollection = () => {
                       justifyContent: 'center',
                       flexShrink: 0,
                       pointerEvents: 'none',
+                      transition: 'transform 0.25s ease',
                     }}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2E3192" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

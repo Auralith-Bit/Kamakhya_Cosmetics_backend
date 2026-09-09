@@ -142,7 +142,7 @@ const OurValues = () => {
         </div>
 
         {/* CARDS */}
-        <div className="flex w-full gap-[20px]">
+        <div className="flex w-full flex-wrap justify-center gap-[20px]">
           {VALUES.map((value) => {
             const SmallIconComp = value.SmallIcon;
 
@@ -151,7 +151,7 @@ const OurValues = () => {
                 key={value.title}
                 className="
                   flex
-                  flex-1
+                  w-[calc((100%-80px)/5)]
                   flex-col
                   items-center
                   text-center
@@ -161,8 +161,22 @@ const OurValues = () => {
                   border
                   border-[#D7DAE4]
                   bg-[#FCF9F2]
-                  shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05),0_8px_24px_-6px_rgba(0,0,0,0.08)]
+                  max-lg:w-[calc((100%-40px)/3)]
+                  max-tab:w-[calc((100%-20px)/2)]
+                  max-sm:w-full
                 "
+                style={{
+                  boxShadow: '0 0.4167vw 0.625vw rgba(0,0,0,0.05), 0 1.0417vw 1.3021vw rgba(0,0,0,0.04)',
+                  transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = '#CCA466';
+                  e.currentTarget.style.boxShadow = '0 0.25vw 0.5vw rgba(0,0,0,0.09), 0 0.9vw 1.6vw rgba(43,46,126,0.14)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = '#D7DAE4';
+                  e.currentTarget.style.boxShadow = '0 0.4167vw 0.625vw rgba(0,0,0,0.05), 0 1.0417vw 1.3021vw rgba(0,0,0,0.04)';
+                }}
               >
                 {/* Main Image */}
                 <div className="w-[100px] h-[100px] flex items-center justify-center mb-5 shrink-0">

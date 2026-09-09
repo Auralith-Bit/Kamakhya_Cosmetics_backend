@@ -25,6 +25,7 @@ import Wishlist from "./pages/Wishlist";
 import BarcodeScannerPage from "./pages/BarcodeScannerPage";
 import { WishlistProvider } from "./context/WishlistContext";
 import { CartProvider } from "./context/CartContext";
+import WhatsAppButton from "./components/WhatsAppButton";
 
 // Admin Panel Imports
 import AdminLayout from "./admin/components/AdminLayout";
@@ -44,10 +45,11 @@ const ScrollToTop = () => {
 const Layout = () => (
   <>
     <Navbar />
-    <main className="w-full pt-[130px]">
+    <main className="w-full pt-32.5 min-[641px]:max-[900px]:pt-[360px]">
       <Outlet />
     </main>
     <Footer />
+    <WhatsAppButton />
   </>
 );
 

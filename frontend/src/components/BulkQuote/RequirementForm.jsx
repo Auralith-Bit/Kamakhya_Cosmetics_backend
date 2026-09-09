@@ -196,7 +196,7 @@ const RequirementForm = () => {
 
             <button
               type="submit"
-              className="inline-flex items-center gap-2.5 bg-[#2E3192] hover:bg-indigo-900 text-white font-bold text-[15px] rounded-lg px-6 py-2 mt-8 transition-colors"
+              className="inline-flex items-center gap-2.5 bg-[#2E3192] hover:bg-indigo-900 !text-white font-bold text-[15px] rounded-lg px-6 py-2 mt-8 transition-colors"
             >
               Request Quotation
               <ArrowRight className="w-4 h-4" />

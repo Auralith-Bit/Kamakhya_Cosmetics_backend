@@ -4,8 +4,8 @@ import { createPortal } from "react-dom";
 import { useWishlist } from "../../context/WishlistContext";
 import { useCart } from "../../context/CartContext";
 import logo from "../../assets/Group 9.png";
-import RLimage from "../../assets/RLimage.png";      // ✅ Royal Luxury logo
-import Shineimage from "../../assets/Shineimage.png"; // ✅ Shine logo
+import RLimage from "../../assets/RLimage.png";
+import Shineimage from "../../assets/Shineimage.png";
 
 /* ============ dropdown rendered via portal (escapes all overflow clipping) ============ */
 const BrandsDropdown = ({ open, onClose, anchors }) => {
@@ -124,6 +124,8 @@ const Navbar = () => {
     { label: "MANUFACTURING", to: "/manufacture", type: "link" },
     { label: "ABOUT", to: "/about", type: "link" },
     { label: "CONTACT", to: "/contact", type: "link" },
+    
+
   ];
 
   const handleSearch = (e) => {
@@ -133,12 +135,17 @@ const Navbar = () => {
 
   const closeMobile = () => setMobileOpen(false);
 
+  useEffect(() => {
+    setMobileOpen(false);
+    setBrandsOpen(false);
+  }, [location]);
+
   return (
     <header className="kn-nav">
       <style>{`
         .kn-nav, .kn-nav *{box-sizing:border-box;}
         .kn-nav{position:fixed;top:0;left:0;z-index:1000;width:100%;background:#fff;
-          font-family:'Poppins','Segoe UI',sans-serif;box-shadow:0 2px 10px rgba(0,0,0,.08);}
+          font-family:'Poppins','Segoe UI',sans-serif;box-shadow:0 4px 20px rgba(0,0,0,.3);}
 
         .kn-diag{position:absolute;top:0;left:0;height:100%;width:340px;z-index:1;
           pointer-events:none;filter:drop-shadow(5px 0 9px rgba(0,0,0,.12));}

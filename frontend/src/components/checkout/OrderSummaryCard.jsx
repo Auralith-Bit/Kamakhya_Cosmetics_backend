@@ -87,7 +87,6 @@ const OrderSummaryCard = () => {
           </div>
 
           <div className="mt-6">
-            {/* Submit Request → /order-review */}
             <button
               type="button"
               onClick={() => navigate('/order-review')}

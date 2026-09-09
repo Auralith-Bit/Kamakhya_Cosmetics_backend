@@ -109,9 +109,11 @@ const ContactSections = () => {
         .cx-sec{width:100%;background:#F7F3EC;padding:2.5vw 0 4.5vw;}
 
         /* ---- info strip ---- */
+        /* ✅ BASE SHADOW softened to match the family */
         .cx-info{width:82.2917vw;margin:0 auto;background:#FCF9F2;
           border:0.0521vw solid #D7DAE4;border-radius:0.5208vw;
-          box-shadow:0 0.7813vw 1.8229vw rgba(0,0,0,0.08);
+          box-shadow:0 0.4167vw 0.8333vw rgba(0,0,0,0.10),
+                     0 1.0417vw 2.0833vw rgba(43,46,126,0.08);
           display:flex;justify-content:space-between;align-items:stretch;
           padding:0.9375vw 1.5625vw;min-height:12.4vw;}
         .cx-info-item{position:relative;flex:1;display:flex;flex-direction:column;
@@ -147,8 +149,11 @@ const ContactSections = () => {
         .cx-main{width:82.2917vw;margin:2.5vw auto 0;display:grid;
           grid-template-columns:51.25fr 28.34fr;gap:2.83vw;align-items:stretch;}
 
+        /* ✅ BASE SHADOW softened to match the family */
         .cx-form{background:#FBFBFD;border:1px solid #E6E6EE;border-radius:0.9vw;
-          padding:2.2vw 2.7vw 2.7vw;box-shadow:0 0.6vw 1.6vw rgba(43,46,126,0.05);}
+          padding:2.2vw 2.7vw 2.7vw;
+          box-shadow:0 0.4167vw 0.8333vw rgba(0,0,0,0.10),
+                     0 1.0417vw 2.0833vw rgba(43,46,126,0.08);}
 
         .cx-form h3{color:#2E3192;font-family:${sans};font-size:1.35vw;font-weight:600;}
         .cx-form-sub{margin-top:0.4vw;color:#555555;font-family:${sans};font-size:1.05vw;}
@@ -278,8 +283,20 @@ const ContactSections = () => {
 
         /* ---- feature cards — circles resized to design (≈76px @1920) ---- */
         .cx-feats{width:82.2917vw;margin:3vw auto 0;display:grid;grid-template-columns:repeat(4,1fr);gap:1.6vw;}
-        .cx-feat{background:#fff;border-radius:0.9vw;box-shadow:0 0.6vw 1.5vw rgba(0,0,0,0.06);
-          padding:1.25vw 1.2vw;display:flex;align-items:center;gap:1.1vw;}
+        
+        /* ✅ BASE SHADOW aligned with the other sections + smooth transition */
+        .cx-feat{background:#fff;border-radius:0.9vw;
+          box-shadow:0 0.4167vw 0.8333vw rgba(0,0,0,0.10),
+                     0 1.0417vw 2.0833vw rgba(43,46,126,0.08);
+          padding:1.25vw 1.2vw;display:flex;align-items:center;gap:1.1vw;
+          transition:box-shadow .3s ease;cursor:pointer;}
+          
+        /* ✅ HOVER — same softened, wide-spreading shadow, NO movement */
+        .cx-feat:hover{
+          box-shadow:0 0.625vw 1.25vw rgba(0,0,0,0.12),
+                     0 1.5625vw 3.125vw rgba(43,46,126,0.20);
+        }
+        
         .cx-feat-ico{width:4vw;height:4vw;border-radius:50%;background:#2E3192;color:#fff;
           display:grid;place-items:center;flex-shrink:0;}
         .cx-feat-ico svg{width:1.9vw;height:1.9vw;}
@@ -304,8 +321,15 @@ const ContactSections = () => {
         /* ============ MOBILE+TABLET ≤1023 ============ */
         @media (max-width:1023px){
           .cx-sec{padding:8vw 5vw 10vw;}
-          .cx-info{width:auto;display:grid;grid-template-columns:1fr 1fr;gap:6vw 0;
-            padding:6vw 4vw;min-height:0;box-shadow:0 10px 24px rgba(0,0,0,0.08);}
+          
+          /* ✅ px-based shadows for containers on small screens */
+          /* ✅ MORE SPACE among the 4 info blocks:
+             row-gap 6vw→10vw, column-gap 0→8vw, bigger inner padding */
+          .cx-info{width:auto;display:grid;grid-template-columns:1fr 1fr;
+            gap:10vw 8vw;
+            padding:9vw 7vw;min-height:0;
+            box-shadow:0 2px 6px rgba(0,0,0,0.08),
+                       0 6px 16px rgba(43,46,126,0.08);}
           .cx-info-item{padding:0 !important;}
           .cx-info-item + .cx-info-item::before{display:none;}
           .cx-ico{width:clamp(48px, 7vw, 74px);height:clamp(48px, 7vw, 74px);}
@@ -317,7 +341,9 @@ const ContactSections = () => {
           .cx-info-text{font-size:clamp(11px, 1.4vw, 15px);line-height:1.7;}
 
           .cx-main{width:auto;grid-template-columns:1fr;gap:6vw;margin-top:7vw;align-items:start;}
-          .cx-form{padding:6vw 5vw 7vw;}
+          .cx-form{padding:6vw 5vw 7vw;
+            box-shadow:0 2px 6px rgba(0,0,0,0.08),
+                       0 6px 16px rgba(43,46,126,0.08);}
           .cx-form h3{font-size:clamp(16px, 2.2vw, 22px);}
           .cx-form-sub{font-size:clamp(12px, 1.5vw, 16px);}
           .cx-label{margin:4vw 0 2vw;font-size:clamp(12px, 1.5vw, 15px);}
@@ -348,7 +374,15 @@ const ContactSections = () => {
           .cx-head-p{font-size:clamp(12px, 1.5vw, 16px);line-height:1.6;max-width:none;}
 
           .cx-feats{width:auto;grid-template-columns:1fr;gap:4vw;margin-top:7vw;}
-          .cx-feat{padding:4vw 3.5vw;}
+          
+          /* ✅ px-based base + hover shadows for feature cards on small screens */
+          .cx-feat{padding:4vw 3.5vw;
+            box-shadow:0 2px 6px rgba(0,0,0,0.08),
+                       0 6px 16px rgba(43,46,126,0.08);}
+          .cx-feat:hover{
+            box-shadow:0 4px 10px rgba(0,0,0,0.10),
+                       0 12px 24px rgba(43,46,126,0.18);
+          }
           .cx-feat-ico{width:clamp(44px, 8vw, 76px);height:clamp(44px, 8vw, 76px);}
           .cx-feat-ico svg{width:clamp(20px, 3.6vw, 36px);height:clamp(20px, 3.6vw, 36px);}
           .cx-feat h5{font-size:clamp(14px, 1.9vw, 20px);}
@@ -357,6 +391,8 @@ const ContactSections = () => {
 
         @media (min-width:640px) and (max-width:1023px){
           .cx-feats{grid-template-columns:1fr 1fr;}
+          /* ✅ tablet: slightly tighter than phones but still airy */
+          .cx-info{gap:8vw 6vw;padding:7vw 6vw;}
         }
       `}</style>
 
@@ -378,7 +414,7 @@ const ContactSections = () => {
       <div className="cx-main">
         <form className="cx-form" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
           <h3>Send us a Message</h3>
-          <p className="cx-form-sub">Fill out the form below and we’ll get back to you as soon as possible.</p>
+          <p className="cx-form-sub">Fill out the form below and we'll get back to you as soon as possible.</p>
 
           <label className="cx-label">Name *</label>
           <input className="cx-input" required placeholder="Your full name" />
@@ -443,7 +479,7 @@ const ContactSections = () => {
       {/* ---- why contact ---- */}
       <header className="cx-head">
         <span className="cx-head-tag">Why Contact Us</span>
-        <h2 className="cx-head-title">We’re Here To Help</h2>
+        <h2 className="cx-head-title">We're Here To Help</h2>
         <img className="cx-squiggle" src={vector1} alt="" aria-hidden="true" />
         <p className="cx-head-p">
           From product inquiries to wholesale partnerships, our team is committed to providing{" "}
@@ -465,5 +501,5 @@ const ContactSections = () => {
     </section>
   );
 };
-
+  
 export default ContactSections;

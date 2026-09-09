@@ -89,6 +89,15 @@ const WhyChooseUs = () => {
             <div
               key={card.title}
               className="flex flex-col bg-[#FCF9F2] border border-[#D7DAE4] rounded-[10px] p-[30px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05),0_8px_24px_-6px_rgba(0,0,0,0.08)]"
+              style={{ transition: 'border-color 0.3s ease, box-shadow 0.3s ease' }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = '#CCA466';
+                e.currentTarget.style.boxShadow = '0 0.25vw 0.5vw rgba(0,0,0,0.09), 0 0.9vw 1.6vw rgba(43,46,126,0.14)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = '#D7DAE4';
+                e.currentTarget.style.boxShadow = '0 20px 50px -12px rgba(0,0,0,0.05), 0 8px 24px -6px rgba(0,0,0,0.08)';
+              }}
             >
               <h3 className="m-0 font-title text-[clamp(17px,1.3vw,20px)] font-bold text-brand-blue leading-[1.3]">
                 {card.title}

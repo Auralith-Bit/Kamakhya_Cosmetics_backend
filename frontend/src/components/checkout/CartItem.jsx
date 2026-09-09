@@ -11,9 +11,28 @@ const TrashIcon = () => (
   </svg>
 );
 
-const CartItem = ({ item, onRemove, onQuantityChange }) => {
+const CartItem = ({ item, onRemove, onQuantityChange, onIncrease, onDecrease }) => {
   const itemKey = item.variantKey || item.id;
-  const unitLabel = item.unitPrice ? `NRs. ${Number(item.unitPrice).toFixed(2)} / unit` : '';
+
+  const handleIncrease = () => {
+    if (onIncrease) onIncrease();
+    else if (onQuantityChange) onQuantityChange(itemKey, item.quantity + 1);
+  };
+
+  const handleDecrease = () => {
+    if (onDecrease) onDecrease();
+    else if (onQuantityChange) onQuantityChange(itemKey, item.quantity - 1);
+  };
+
+  const handleRemove = () => {
+    if (onRemove) onRemove(itemKey);
+  };
+
+  const displayUnits = item.totalUnits
+    ? `${item.quantity} ${item.quantity > 1 ? 'batches' : 'batch'} (${Number(item.totalUnits).toLocaleString()} units)`
+    : item.unitsPerPack
+    ? `${item.quantity} * ${item.unitsPerPack.toLocaleString()} = ${(item.unitsPerPack * item.quantity).toLocaleString()} units`
+    : `${item.quantity} ${item.quantity > 1 ? 'batches' : 'batch'}`;
 
   return (
     <div className="flex items-start gap-3 py-4 border-b border-gray-100 last:border-b-0">
@@ -41,7 +60,7 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => {
           </div>
           <button
             type="button"
-            onClick={() => onRemove && onRemove(itemKey)}
+            onClick={handleRemove}
             aria-label={`Remove ${item.name}`}
             className="flex items-center justify-center w-7 h-7 rounded-md border-none bg-transparent cursor-pointer shrink-0 hover:bg-red-50 transition-colors"
           >
@@ -53,11 +72,11 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => {
           <div className="flex items-center gap-3">
             <QuantityControl
               quantity={item.quantity}
-              onIncrease={() => onQuantityChange && onQuantityChange(itemKey, item.quantity + 1)}
-              onDecrease={() => onQuantityChange && onQuantityChange(itemKey, item.quantity - 1)}
+              onIncrease={handleIncrease}
+              onDecrease={handleDecrease}
             />
             <p className="m-0 text-[12px] text-gray-400">
-              {item.quantity} {item.quantity > 1 ? 'batches' : 'batch'} ({Number(item.totalUnits || 0).toLocaleString()} units)
+              {displayUnits}
             </p>
           </div>
           <span className="text-[14px] font-bold text-brand-blue whitespace-nowrap">

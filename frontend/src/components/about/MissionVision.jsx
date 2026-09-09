@@ -73,11 +73,12 @@ const MissionVision = () => {
         {/* Cards */}
         <div className="flex justify-center gap-[60px] max-lg:flex-col max-lg:items-center">
           {/* Mission Card */}
-          <div className="relative rounded-[16px] overflow-hidden bg-gradient-to-br from-[#8B1A1A] to-[#4A0E0E] p-[40px] w-[666px] h-[316px] flex flex-col max-sm:w-full max-sm:h-auto">
-            <div className="absolute top-[-30px] right-[-30px] w-[150px] h-[150px] rounded-full bg-white/[0.04]" />
-            <div className="absolute bottom-[-40px] left-[-20px] w-[120px] h-[120px] rounded-full bg-white/[0.05]" />
+          <div className="relative rounded-[16px] overflow-hidden bg-gradient-to-br from-[#8B1A1A] to-[#4A0E0E] p-[40px] max-sm:p-6 w-[666px] h-[316px] flex flex-col max-lg:w-full max-lg:h-auto">
+            <div className="absolute top-[-30px] right-[-30px] w-[150px] h-[150px] rounded-full bg-white/15" />
+            <div className="absolute bottom-[-40px] left-[-20px] w-[120px] h-[120px] rounded-full bg-white/10" />
+            <div className="absolute top-[55%] right-[20%] -translate-x-1/2 -translate-y-1/2 w-[88px] h-[88px] rounded-full border-2 border-white/30" />
 
-            <div className="relative z-[2] flex flex-col h-full">
+            <div className="relative z-[2] flex flex-col h-full max-sm:h-auto">
               <div className="flex items-center gap-4">
                 <div className="w-[52px] h-[52px] rounded-[12px] bg-white/10 flex items-center justify-center text-white shrink-0">
                   <TargetIcon />
@@ -88,15 +89,15 @@ const MissionVision = () => {
                 </div>
               </div>
 
-              <p className="font-body text-[15px] leading-[1.8] text-white/80 mt-auto mb-6">
+              <p className="font-body text-[15px] leading-[1.8] text-white/80 mt-auto mb-6 max-sm:mt-4">
                 We are committed to creating safe, high-quality beauty and
                 home-care products through responsible daily practices,
                 innovation, and genuine care for our customers.
               </p>
 
-              <div className="flex justify-end gap-5">
+              <div className="flex justify-end gap-5 max-sm:flex-wrap max-sm:justify-start max-sm:gap-3">
                 {['Quality', 'Innovation', 'Trust'].map((tag) => (
-                  <span key={tag} className="px-6 py-2.5 rounded-full border border-white/30 text-white text-sm font-semibold font-body">
+                  <span key={tag} className="px-6 py-2.5 max-sm:px-3 max-sm:py-2 rounded-full border border-white/30 text-white text-sm font-semibold font-body">
                     {tag}
                   </span>
                 ))}
@@ -105,11 +106,12 @@ const MissionVision = () => {
           </div>
 
           {/* Vision Card */}
-          <div className="relative rounded-[16px] overflow-hidden bg-gradient-to-br from-[#1a1a4e] to-[#0d0d3a] p-[40px] w-[666px] h-[316px] flex flex-col max-sm:w-full max-sm:h-auto">
-            <div className="absolute top-[-20px] right-[-40px] w-[160px] h-[160px] rounded-full bg-white/[0.04]" />
-            <div className="absolute bottom-[-30px] left-[-30px] w-[130px] h-[130px] rounded-full bg-white/[0.05]" />
+          <div className="relative rounded-[16px] overflow-hidden bg-gradient-to-br from-[#1a1a4e] to-[#0d0d3a] p-[40px] max-sm:p-6 w-[666px] h-[316px] flex flex-col max-lg:w-full max-lg:h-auto">
+            <div className="absolute top-[-20px] right-[-40px] w-[160px] h-[160px] rounded-full bg-white/15" />
+            <div className="absolute bottom-[-30px] left-[-30px] w-[130px] h-[130px] rounded-full bg-white/10" />
+            <div className="absolute top-[55%] right-[20%] -translate-x-1/2 -translate-y-1/2 w-[88px] h-[88px] rounded-full border-2 border-white/30" />
 
-            <div className="relative z-[2] flex flex-col h-full">
+            <div className="relative z-[2] flex flex-col h-full max-sm:h-auto">
               <div className="flex items-center gap-4">
                 <div className="w-[52px] h-[52px] rounded-[12px] bg-white/10 flex items-center justify-center text-white shrink-0">
                   <GlobeIcon />
@@ -120,15 +122,15 @@ const MissionVision = () => {
                 </div>
               </div>
 
-              <p className="font-body text-[15px] leading-[1.8] text-white/80 mt-auto mb-6">
+              <p className="font-body text-[15px] leading-[1.8] text-white/80 mt-auto mb-6 max-sm:mt-4">
                 To become a trusted leader in beauty and home care,
                 delivering quality, inspiring innovation, and creating products
                 that enrich everyday life.
               </p>
 
-              <div className="flex justify-end gap-5">
+              <div className="flex justify-end gap-5 max-sm:flex-wrap max-sm:justify-start max-sm:gap-3">
                 {['Trusted', 'Innovative', 'Responsible'].map((tag) => (
-                  <span key={tag} className="px-6 py-2.5 rounded-full border border-white/30 text-white text-sm font-semibold font-body">
+                  <span key={tag} className="px-6 py-2.5 max-sm:px-3 max-sm:py-2 rounded-full border border-white/30 text-white text-sm font-semibold font-body">
                     {tag}
                   </span>
                 ))}

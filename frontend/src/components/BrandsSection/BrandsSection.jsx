@@ -124,17 +124,18 @@ const ArrowRight = () => (
 /* ─── Brand Card ────────────────────────────────────────────────────── */
 const BrandCard = ({ image, badge, badgeBg, badgeSide, overlayAlign, categoryTag, brandName, brandColor, tagline, description, features, to }) => (
   <div
+    className="br-card"
     style={{
       background: '#fbfbf9', borderRadius: '12px', boxShadow: '0 4px 28px rgba(0,0,0,0.09)',
       border: '1.5px solid transparent',
-      overflow: 'hidden', width: 'min(470px, 100%)', flexShrink: 0,
+      overflow: 'hidden', width: 'min(470px, 100%)',
       transition: 'transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
     }}
     onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = `0 8px 32px rgba(0,0,0,0.14)`; e.currentTarget.style.borderColor = brandColor + '60'; }}
     onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 28px rgba(0,0,0,0.09)'; e.currentTarget.style.borderColor = 'transparent'; }}
   >
     {/* Image area */}
-    <div style={{ position: 'relative', height: '300px', overflow: 'hidden' }}>
+    <div className="br-card-media" style={{ position: 'relative', height: '288px', overflow: 'hidden' }}>
       <img src={image} alt={brandName} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
       <div style={{
         position: 'absolute', inset: 0,
@@ -186,7 +187,7 @@ const BrandCard = ({ image, badge, badgeBg, badgeSide, overlayAlign, categoryTag
       <p style={{ margin: 0, fontSize: '13.5px', color: '#777', lineHeight: 1.65 }}>{description}</p>
 
       {/* Features grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px 6px', marginTop: '20px', marginBottom: '22px' }}>
+      <div className="br-featgrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px 6px', marginTop: '20px', marginBottom: '22px' }}>
         {features.map((f, i) => (
           <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
             <div style={{
@@ -217,7 +218,7 @@ const BrandCard = ({ image, badge, badgeBg, badgeSide, overlayAlign, categoryTag
         onMouseEnter={e => { e.currentTarget.style.background = brandColor + '1A'; e.currentTarget.style.color = brandColor; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.10)'; }}
         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = brandColor; e.currentTarget.style.boxShadow = 'none'; }}
       >
-        Explore Colletctions <ArrowRight />
+        Explore Collections <ArrowRight />
       </Link>
     </div>
   </div>
@@ -225,7 +226,8 @@ const BrandCard = ({ image, badge, badgeBg, badgeSide, overlayAlign, categoryTag
 
 /* ─── Main Section ──────────────────────────────────────────────────── */
 const BrandsSection = () => (
-  <section style={{ background: '#f7f6f2', padding: '72px 0 80px', overflow: 'hidden' }}>
+  <section className="bs-section" style={{ background: '#f7f6f2', padding: '72px 0 80px', overflow: 'hidden' }}>
+    <style>{`@media (max-width:640px){ .bs-section{padding:48px 0 56px !important;} .br-card{width:100%!important;} .br-card-media{height:220px!important;} .br-featgrid{grid-template-columns:repeat(2,1fr)!important;} }`}</style>
     <div className="px-[125px] max-lg:px-8 max-sm:px-5">
 
       {/* Header */}
@@ -255,36 +257,36 @@ const BrandsSection = () => (
         />
 
         {/* Center connector */}
-        <div className="max-lg:hidden" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: '330px' }}>
+        <div className="max-sm:hidden" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: 'clamp(210px, 24vw, 330px)' }}>
           <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
             <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: ORANGE, flexShrink: 0, zIndex: 2 }} />
             <div style={{ flex: 1, height: 0, borderTop: `2px dashed ${GOLD}` }} />
             {/* Double-ring circle */}
             <div style={{
-              width: '230px', height: '230px', borderRadius: '50%', border: `1.5px solid ${GOLD}`,
+              width: 'clamp(120px, 12vw, 230px)', height: 'clamp(120px, 12vw, 230px)', borderRadius: '50%', border: `1.5px solid ${GOLD}`,
               background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
               position: 'relative', flexShrink: 0, boxShadow: '0 2px 18px rgba(201,162,75,0.12)', zIndex: 2,
             }}>
               <div style={{ position: 'absolute', inset: '5px', borderRadius: '50%', border: '1px solid rgba(201,162,75,0.55)' }} />
-              <img src={kamakhyaLogo} alt="Kamakhya Cosmetics" style={{ width: '145px', objectFit: 'contain' }} />
+              <img src={kamakhyaLogo} alt="Kamakhya Cosmetics" style={{ width: 'clamp(80px, 8vw, 145px)', objectFit: 'contain' }} />
             </div>
             <div style={{ flex: 1, height: 0, borderTop: `2px dashed ${GOLD}` }} />
             <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: ORANGE, flexShrink: 0, zIndex: 2 }} />
           </div>
 
-          <div style={{ width: 0, height: '46px', borderLeft: `2px dashed ${GOLD}`, marginTop: '2px' }} />
+          <div style={{ width: 0, height: 'clamp(24px, 3vw, 46px)', borderLeft: `2px dashed ${GOLD}`, marginTop: '2px' }} />
 
           {/* Outlined heart circle */}
           <div style={{
-            width: '64px', height: '64px', borderRadius: '50%', border: `1.5px solid ${GOLD}`,
+            width: 'clamp(48px, 4.5vw, 64px)', height: 'clamp(48px, 4.5vw, 64px)', borderRadius: '50%', border: `1.5px solid ${GOLD}`,
             background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <svg viewBox="0 0 24 24" fill={GOLD} width="24" height="24">
+            <svg viewBox="0 0 24 24" fill={GOLD} style={{ width: 'clamp(19px, 1.7vw, 24px)', height: 'clamp(19px, 1.7vw, 24px)' }}>
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
           </div>
 
-          <p style={{ margin: '16px 0 0', fontFamily: 'Poppins, sans-serif', fontSize: '13.5px', color: '#000', lineHeight: 1.65, textAlign: 'center', maxWidth: '200px' }}>
+          <p style={{ margin: 'clamp(10px, 1.2vw, 16px) 0 0', fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(12px, 1.05vw, 13.5px)', color: '#000', lineHeight: 1.65, textAlign: 'center', maxWidth: 'clamp(150px, 14vw, 200px)' }}>
             Driven by our promise of{' '}
             <strong style={{ color: ORANGE, fontWeight: 700 }}>BEAUTY, CARE &amp; TRUST.</strong>{' '}
             we Create products that enhance everyday life.

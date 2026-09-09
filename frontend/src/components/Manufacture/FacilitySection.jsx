@@ -1,190 +1,349 @@
+import React from "react";
 import vectorGold from "../../assets/Vector (1) Gold.svg";
-import imgManufacturing from "../../assets/manufactureAssets/aboutManu.png"; // ✏️ REPLACED: local image
-import {
-  imgPlayBtn,
-  imgFacilityIcon1,
-  imgFacilityIcon2,
-  imgFacilityIcon3,
-  imgFacilityIcon4,
-} from "../../assets/figmaAssets";
-// eslint-disable-next-line no-unused-vars
-import { contentMax, fluid, pagePadX, s } from "./figmaScale";
+import imgManufacturing from "../../assets/manufactureAssets/aboutManu.png"; 
+
+const serif = "'Playfair Display', Georgia, serif";
+const sans = "'Poppins', 'Segoe UI', sans-serif";
+
+/* ✅ inline icons */
+const IconFlask = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9.5 3h5M9.5 3v6l-5.2 8.6A2.4 2.4 0 0 0 6.4 21h11.2a2.4 2.4 0 0 0 2.1-3.4L14.5 9V3" />
+    <path d="M7.5 15h9" />
+  </svg>
+);
+const IconShield = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m12 3 7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6Z" />
+    <path d="m9 11.5 2.2 2.2L15.5 9" />
+  </svg>
+);
+const IconAward = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="9" r="5" />
+    <path d="M9.5 13.5 8 21l4-2 4 2-1.5-7.5" />
+  </svg>
+);
+const IconLeaf = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+    <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+  </svg>
+);
+const PlayIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="#1b1b1b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M8 5.5v13l11-6.5Z" />
+  </svg>
+);
+>>>>>>> origin/main
 
 const FEATURES = [
-  { icon: imgFacilityIcon1, label: "Advanced\nManufacturing" },
-  { icon: imgFacilityIcon2, label: "Quality\nAssurance" },
-  { icon: imgFacilityIcon3, label: "International\nCertifications" },
-  { icon: imgFacilityIcon4, label: "Sustainable\nPractices" },
+  { Icon: IconFlask,  label: "Advanced\nManufacturing" },
+  { Icon: IconShield, label: "Quality\nAssurance" },
+  { Icon: IconAward,  label: "International\nCertifications" },
+  { Icon: IconLeaf,   label: "Sustainable\nPractices" },
 ];
 
-const FacilitySection = () => {
-  return (
-    <section
-      className="bg-[#f5f7fa]"
-      style={{
-        paddingLeft: fluid(178, 20),
-        paddingRight: fluid(50, 20),
-        paddingTop: fluid(100, 40),
-        paddingBottom: fluid(100, 40),
-      }}
-      aria-labelledby="facility-heading"
-    >
-      <div
-        className="mx-auto flex w-full flex-col items-center lg:flex-row"
-        style={{
-          maxWidth: "100%",
-          columnGap: fluid(120, 24),
-          rowGap: fluid(60, 24),
-        }}
-      >
-        {/* Left: Video / Image */}
-        <div
-          className="relative w-full overflow-hidden lg:w-auto lg:shrink-0"
-          style={{
-            width: s(890),
-            height: "auto",
-            aspectRatio: "890 / 590",
-            maxWidth: "100%",
-            marginTop: s(0),
-            marginBottom: s(0),
-            marginLeft: s(0),
-            marginRight: s(0),
-            borderRadius: s(10),
-          }}
-        >
-          <img
-            src={imgManufacturing}
-            alt="Inside Kamakhya Cosmetics manufacturing facility"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
+const FacilitySection = () => (
+  <section id="manufacture-facility" className="mf-sec" aria-labelledby="facility-heading">
+    <style>{`
+      /* ============ DESKTOP ≥1024 — 1920 design, all vw ============ */
+      .mf-sec{width:100%;background:#f5f7fa;
+        padding:5.2083vw 2.6042vw 5.2083vw 9.2708vw;}
 
-          <button
-            aria-label="Play manufacturing facility video"
-            className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center bg-white shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.1),0px_8px_10px_-6px_rgba(0,0,0,0.1)] transition-transform hover:scale-105"
-            style={{ height: s(72), width: s(72), borderRadius: s(12) }}
-          >
-            <img
-              src={imgPlayBtn}
-              alt=""
-              style={{ height: s(30), width: s(30) }}
-            />
-          </button>
+      .mf-wrap{display:flex;align-items:center;column-gap:8.3333vw;row-gap:3.125vw;}
+
+      .mf-media{position:relative;flex-shrink:0;width:49.4792vw;
+        aspect-ratio:890/590;border-radius:1vw;overflow:hidden;}
+
+      .mf-img{
+        position:absolute;
+        inset:0;
+        width:90%;
+        height:90%;
+        object-fit:cover;
+        display:block;
+        border-radius:inherit;
+      }
+
+      .mf-tint{
+        position:absolute;
+        inset:0;
+        width:90%;
+        height:90%;
+        background:rgba(0,0,0,0.28);
+        border-radius:inherit;
+      }
+
+      .mf-play{
+        position:absolute;
+        left:45%;
+        top:45%;
+        transform:translate(-50%,-50%);
+        width:3.75vw;
+        height:3.75vw;
+        border-radius:0.625vw;
+        border:none;cursor:pointer;
+        background:#fff;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        box-shadow:0 1.0417vw 1.3021vw -0.3125vw rgba(0,0,0,0.1), 0 0.4167vw 0.5208vw -0.3125vw rgba(0,0,0,0.1);
+      }
+
+      .mf-play svg{width:1.5625vw;height:1.5625vw;}
+
+      .mf-copy{
+        flex:1;
+        margin-top:-5vw;
+        margin-left:-7.8vw;
+        max-width:41.6667vw;
+        display:flex;
+        flex-direction:column;
+        gap:2.5vw;
+      }
+
+      .mf-tag{
+        color:#E38F2E;
+        font-family:${sans};
+        font-size:0.8854vw;
+        font-weight:600;
+        letter-spacing:0.15em;
+        text-transform:uppercase;
+      }
+
+      .mf-squiggle{
+        width:4.6875vw;
+        height:auto;
+        display:block;
+        margin-top:0.5vw;
+      }
+
+      .mf-title{
+        margin-top:0.5vw;
+        color:#2E3192;
+        font-family:${serif};
+        font-size:1.3021vw;
+        font-weight:700;
+        line-height:1.25;
+        letter-spacing:0.095em;
+        white-space:nowrap;
+      }
+
+      .mf-title .mf-orange{color:#E38F2E;}
+
+      .mf-paras{
+        display:flex;
+        flex-direction:column;
+        gap:1.25vw;
+        color:#121212;
+        font-family:${sans};
+        font-size:0.89vw;
+        font-weight:500;
+        margin-top:-1vw;
+        line-height:1.7;
+        max-width:34vw;
+        letter-spacing:0.03em;
+        text-align:justify;
+      }
+
+      .mf-feats{
+        display:grid;
+        grid-template-columns:repeat(4,1fr);
+        gap:0.8333vw;
+        width:100%;
+        margin-left:-0.89vw;
+      }
+
+      .mf-feat{display:flex;flex-direction:column;align-items:center;gap:0.9896vw;min-width:0;}
+      .mf-circle{width:3.8542vw;height:3.8542vw;border-radius:50%;
+        border:0.0781vw solid #E38F2E;color:#E38F2E;flex-shrink:0;
+        display:flex;align-items:center;justify-content:center;}
+      .mf-circle svg{width:1.7708vw;height:1.7708vw;}
+      .mf-label{white-space:pre-line;text-align:center;color:#121212;
+        font-family:${sans};font-weight:500;font-size:0.9375vw;line-height:1.4;}
+
+      /* ============ PHONES ≤639 — stacked, compact ============ */
+      @media (max-width:639px){
+        .mf-sec{padding:8vw 5vw;}
+        .mf-wrap{flex-direction:column;align-items:flex-start;gap:6vw;}
+
+        .mf-media{
+          width: 100%;
+          height: auto;
+          margin-left: 0.9vw;
+          aspect-ratio: 4/3;
+          border-radius: 2vw;
+          overflow: hidden;
+          position: relative;
+        }
+
+        /* ✅ inherit the 2vw radius on all corners */
+        .mf-img, .mf-tint{
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: inherit;
+        }
+
+        .mf-play{
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          width: clamp(52px, 14vw, 72px);
+          height: clamp(52px, 14vw, 72px);
+          border-radius: 12px;
+        }
+        .mf-play svg{width: clamp(22px, 6vw, 30px); height: clamp(22px, 6vw, 30px);}
+
+        .mf-copy{
+        margin-top: 3vw;
+        max-width: none;
+        width: 100%;
+        gap: 5vw;
+        }
+
+        .mf-tag{
+          font-size: clamp(12px, 3.2vw, 15px);
+          margin-left: 9vw;
+        }
+
+        .mf-squiggle{
+          width: clamp(70px, 20vw, 90px);
+          margin-left: 9vw;
+        }
+
+        .mf-title{
+          margin-top: 3vw;
+          margin-left: 9vw;
+          font-size: clamp(22px, 6vw, 30px);
+          text-align: left;
+          max-width: 100%;
+          white-space: normal;
+        }
+
+        .mf-paras{
+          gap: 3.5vw;
+          font-size: clamp(13px, 3.6vw, 15px);
+          text-align: justify;
+          margin-left: 9vw;
+          width: 90%;
+          max-width: 100%;
+        }
+
+        .mf-feats{
+          grid-template-columns: repeat(2, 1fr);
+          gap: 6vw 3vw;
+          margin-left: 9vw;
+          width: 90%;
+        }
+
+        .mf-circle{width: clamp(56px, 16vw, 74px); height: clamp(56px, 16vw, 74px);}
+        .mf-circle svg{width: clamp(26px, 8vw, 34px); height: clamp(26px, 8vw, 34px);}
+        .mf-label{font-size: clamp(12px, 3.4vw, 14px);}
+      }
+
+      /* ============ TABLET 640–1023 — stacked, fixed type ============ */
+      @media (min-width:640px) and (max-width:1023px){
+        .mf-sec{padding:6vw;}
+        .mf-wrap{flex-direction:column;align-items:center;gap:6vw;}
+
+        .mf-media{width:100%;aspect-ratio:16/9;border-radius:2vw;overflow:hidden;position:relative;}
+
+        .mf-img, .mf-tint{
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: inherit;
+        }
+
+        .mf-play{
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          width: 64px;
+          height: 64px;
+          border-radius: 12px;
+        }
+        .mf-play svg{width: 28px; height: 28px;}
+
+        .mf-copy{
+        margin-left: 0vw;
+        max-width:none;
+        width:100%;
+        gap:24px;
+        }
+
+        .mf-tag{font-size:14px;}
+        .mf-squiggle{width:90px;}
+        .mf-title{margin-top:12px;font-size:30px;white-space:normal;}
+
+        .mf-paras{
+        gap:14px;
+        font-size:14px;
+        text-align:justify;
+        max-width:100%;
+        }
+
+        .mf-feats{grid-template-columns:repeat(4,1fr);gap:16px;}
+        .mf-circle{width:64px;height:64px;}
+        .mf-circle svg{width:30px;height:30px;}
+        .mf-label{font-size:13px;}
+      }
+    `}</style>
+
+    <div className="mf-wrap">
+      {/* Left: Video / Image */}
+      <div className="mf-media">
+        <img className="mf-img" src={imgManufacturing} alt="Inside Kamakhya Cosmetics manufacturing facility" />
+        <div className="mf-tint" aria-hidden="true" />
+        <button className="mf-play" aria-label="Play manufacturing facility video">
+          <PlayIcon />
+        </button>
+      </div>
+
+      {/* Right: Content */}
+      <div className="mf-copy">
+        <div>
+          <p className="mf-tag">Our Manufacturing Facility</p>
+          <img className="mf-squiggle" src={vectorGold} alt="" aria-hidden="true" />
+          <h2 id="facility-heading" className="mf-title">
+            The World-Class <span className="mf-orange">Manufacturing</span>, You Can Trust
+          </h2>
         </div>
 
-        {/* Right: Content */}
-        <div
-          className="flex w-full flex-col lg:flex-1"
-          style={{ maxWidth: s(662), gap: fluid(40, 20) }}
-        >
-          <div className="flex flex-col" style={{ gap: fluid(20, 12) }}>
-            <div className="flex flex-col" style={{ gap: fluid(25, 12) }}>
-              {/* --- TAG / EYEBROW --- */}
-              <div
-                className="flex flex-col justify-center"
-                style={{
-                  width: "100%",
-                  maxWidth: "100%",
-                  gap: fluid(10, 6),
-                  marginTop: s(-20),
-                  marginBottom: s(0),
-                  marginLeft: s(0),
-                  marginRight: s(0),
-                }}
-              >
-                <p
-                  className="font-['Poppins'] font-semibold uppercase text-[#e38f2e]"
-                  style={{ fontSize: fluid(17, 13), letterSpacing: "0.12em" }}
-                >
-                  Our Manufacturing Facility
-                </p>
+        <div className="mf-paras">
+          <p>
+            Our modern manufacturing facility combines advanced technology,
+            skilled professionals, and strict quality standards to produce
+            premium beauty and home care products with precision, safety,
+            and consistency.
+          </p>
+          <p>
+            Every stage—from raw material selection and production to
+            quality testing and packaging—is carefully monitored to ensure
+            products you can trust.
+          </p>
+        </div>
 
-                <img
-                  src={vectorGold}
-                  alt=""
-                  aria-hidden="true"
-                  style={{
-                    width: s(75),
-                    height: "auto",
-                    display: "block",
-                    marginLeft: s(0),
-                  }}
-                />
-              </div>
-
-              {/* --- TITLE --- */}
-              <h2
-                id="facility-heading"
-                className="font-['Playfair_Display'] font-bold leading-[1.25] lg:whitespace-nowrap"
-                style={{ fontSize: fluid(25, 18), maxWidth: "100%" }}
-              >
-                <span className="text-[#2e3192]">The World-Class </span>
-                <span className="text-[#e38f2e]">Manufacturing</span>
-                <span className="text-[#2e3192]">, You Can Trust</span>
-              </h2>
+        {/* Feature icons */}
+        <div className="mf-feats">
+          {FEATURES.map(({ Icon, label }) => (
+            <div className="mf-feat" key={label}>
+              <div className="mf-circle"><Icon /></div>
+              <p className="mf-label">{label}</p>
             </div>
-
-            {/* --- PARAGRAPHS --- */}
-            <div
-              className="flex w-full flex-col font-poppins font-normal text-left lg:text-justify text-[#1c1b1b]"
-              style={{
-                gap: fluid(20, 12),
-                fontSize: fluid(16, 14),
-                lineHeight: 1.7,
-              }}
-            >
-              <p>
-                Our modern manufacturing facility combines advanced technology,
-                skilled professionals, and strict quality standards to produce
-                premium beauty and home care products with precision, safety,
-                and consistency.
-              </p>
-              <p>
-                Every stage—from raw material selection and production to
-                quality testing and packaging—is carefully monitored to ensure
-                products you can trust.
-              </p>
-            </div>
-          </div>
-
-          {/* Feature icons row */}
-          <div
-            className="grid grid-cols-2 lg:grid-cols-4"
-            style={{
-              gap: fluid(12, 8),
-              width: "calc(100% + 24px)",
-              marginLeft: "-9px",
-            }}
-          >
-            {FEATURES.map((feature) => (
-              <div
-                key={feature.label}
-                className="flex min-w-0 flex-col items-center"
-                style={{ gap: fluid(19, 10) }}
-              >
-                <div
-                  className="flex shrink-0 items-center justify-center rounded-full border-[#e38f2e]"
-                  style={{ height: s(54), width: s(54), borderWidth: s(1.5) }}
-                >
-                  <img
-                    src={feature.icon}
-                    alt=""
-                    style={{ height: s(24), width: s(24) }}
-                  />
-                </div>
-
-                <p
-                  className="whitespace-pre-line text-center font-['Poppins'] font-medium leading-snug text-[#333]"
-                  style={{ fontSize: fluid(18, 12) }}
-                >
-                  {feature.label}
-                </p>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
-    </section>
-  );
-};
+    </div>
+  </section>
+);
 
 export default FacilitySection;

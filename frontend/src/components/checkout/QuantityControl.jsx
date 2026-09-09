@@ -7,7 +7,9 @@ const QuantityControl = ({ quantity, onIncrease, onDecrease }) => {
         type="button"
         onClick={onDecrease}
         aria-label="Decrease quantity"
-        className="flex items-center justify-center w-[30px] h-full border-none bg-transparent text-gray-500 cursor-pointer transition-colors hover:bg-gray-100 hover:text-gray-800 text-[14px]"
+        onClick={onDecrease}
+        disabled={quantity <= 1}
+        className="flex items-center justify-center w-[30px] h-full border-none bg-transparent text-gray-500 cursor-pointer transition-colors hover:bg-gray-100 hover:text-gray-800 text-[14px] disabled:opacity-40 disabled:cursor-not-allowed"
       >
         -
       </button>
@@ -18,6 +20,7 @@ const QuantityControl = ({ quantity, onIncrease, onDecrease }) => {
         type="button"
         onClick={onIncrease}
         aria-label="Increase quantity"
+        onClick={onIncrease}
         className="flex items-center justify-center w-[30px] h-full border-none bg-transparent text-gray-500 cursor-pointer transition-colors hover:bg-gray-100 hover:text-gray-800 text-[14px]"
       >
         +

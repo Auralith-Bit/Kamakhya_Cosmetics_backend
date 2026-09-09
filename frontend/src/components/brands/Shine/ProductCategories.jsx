@@ -56,11 +56,21 @@ const ProductCategories = () => {
           width:9.25vw;height:auto;}
 
         /* ✅ cards are now <Link> anchors */
+        /* ✅ BASE SHADOW strengthened + smooth shadow transition (same as other cards) */
         .pc-card{position:absolute;top:14.2708vw;width:15.1042vw;height:20.0521vw;
           background:#fff;border-radius:0.5208vw;overflow:hidden;
-          box-shadow:0 0.4167vw 0.625vw rgba(0,0,0,0.08), 0 1.0417vw 1.3021vw rgba(0,0,0,0.05);
+          box-shadow:0 0.4167vw 0.8333vw rgba(0,0,0,0.10),
+                     0 1.0417vw 2.0833vw rgba(43,46,126,0.08);
+          transition:box-shadow .3s ease;
           animation:pc-in .45s ease;
           display:block;text-decoration:none;cursor:pointer;}
+
+        /* ✅ HOVER — same dark, wide-spreading shadow, NO card movement */
+        .pc-card:hover{
+          box-shadow:0 0.625vw 1.25vw rgba(0,0,0,0.12),
+                     0 1.5625vw 3.125vw rgba(43,46,126,0.20);
+        }
+
         @keyframes pc-in{from{opacity:0;transform:translateX(1.5vw);}to{opacity:1;transform:none;}}
         .pc-c1{left:8.8542vw;}
         .pc-c2{left:25.651vw;}
@@ -113,8 +123,13 @@ const ProductCategories = () => {
             line-height:1.6;margin-top:2vw;max-width:92%;}
           .pc-sub br{display:none;}
 
+          /* ✅ px-based base + hover shadows for small screens */
           .pc-card{position:relative;top:0;left:0;grid-column:1/-1;grid-row:2;
-            justify-self:center;width:min(55vw, 480px);height:auto;}
+            justify-self:center;width:min(55vw, 480px);height:auto;
+            box-shadow:0 2px 6px rgba(0,0,0,0.08),
+                       0 6px 16px rgba(43,46,126,0.08);}
+          .pc-card:hover{box-shadow:0 4px 10px rgba(0,0,0,0.10),
+                                    0 12px 24px rgba(43,46,126,0.18);}
           .pc-c1{left:0;}
           .pc-c2,.pc-c3,.pc-c4,.pc-c5{display:none;}
 

@@ -1,90 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { ArrowRight, Trash2, Package, CalendarClock, Sparkles } from "lucide-react";
 import { products as staticProducts } from "../../data/product";
 import { useWishlist } from "../../context/WishlistContext";
 import { getProducts } from "../../api/products";
+import ProductCard from "../Products/ProductCard";
 import EmptyProducts from "./EmptyProducts";
 
-const WishlistCard = ({ product, onRemove }) => {
-    const productId = product._id || product.id;
-
-    return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
-            <div className="relative">
-                <span className="absolute top-3 left-3 flex items-center gap-1 bg-white/90 text-[10px] font-semibold tracking-wide px-3 py-1.5 rounded-full text-[#E38F2E]">
-                    <Sparkles className="w-3 h-3" />
-                    {(product.type || "Featured").toUpperCase()}
-                </span>
-
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onRemove(productId);
-                    }}
-                    className="absolute top-3 right-3 z-10 bg-white rounded-full p-2 shadow cursor-pointer hover:bg-red-50 transition"
-                    aria-label={`Remove ${product.title} from wishlist`}
-                >
-                    <Trash2 className="w-4 h-4 text-[#2E3192] hover:text-red-500 transition-colors" />
-                </button>
-
-                {/* image → product page */}
-                <Link to={`/products/${productId}`} className="block no-underline">
-                    <img
-                        src={product.image}
-                        alt={product.title}
-                        className="w-full h-64 object-cover"
-                    />
-                </Link>
-            </div>
-
-            <div className="p-4">
-                {/* title → product page */}
-                <Link to={`/products/${productId}`} className="no-underline">
-                    <h4 className="text-center font-serif text-lg text-gray-800 mb-1 hover:text-[#2E3192] transition">
-                        {product.title}
-                    </h4>
-                </Link>
-                <p className="text-center text-xs text-gray-500 mb-4 line-clamp-2">
-                    {product.desc}
-                </p>
-
-                <div className="flex justify-center gap-6 mb-4">
-                    <div className="flex items-center gap-2">
-                        <span className="w-9 h-9 rounded-full bg-[#FBF6ED] flex items-center justify-center shrink-0">
-                            <Package className="w-4 h-4 text-[#CCA466]" />
-                        </span>
-                        <div className="text-left">
-                            <p className="text-[10px] text-[#CCA466]">MOQ</p>
-                            <p className="text-xs font-medium text-gray-700">{product.moq}</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <span className="w-9 h-9 rounded-full bg-[#FBF6ED] flex items-center justify-center shrink-0">
-                            <CalendarClock className="w-4 h-4 text-[#CCA466]" />
-                        </span>
-                        <div className="text-left">
-                            <p className="text-[10px] text-[#CCA466]">Lead Time</p>
-                            <p className="text-xs font-medium text-gray-700">{product.lead}</p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* View Products → product page */}
-                <Link
-                    to={`/products/${productId}`}
-                    className="no-underline w-full flex items-center justify-center gap-2 border border-[#2E3192] text-[#2E3192] rounded-full py-2 text-sm font-medium hover:bg-[#2E3192] hover:text-white transition"
-                >
-                    View Products
-                    <ArrowRight className="w-4 h-4" />
-                </Link>
-            </div>
-        </div>
-    );
-};
-
 const ProductWishlist = () => {
-    const { wishlistIds, removeFromWishlist } = useWishlist();
+    const { wishlistIds } = useWishlist();
     const [allProducts, setAllProducts] = useState(staticProducts);
 
     useEffect(() => {
@@ -109,8 +31,8 @@ const ProductWishlist = () => {
     });
 
     return (
-        <section className={`bg-[#FCFAF7] ${wishlistProducts.length === 0 ? "flex flex-col min-h-[calc(100dvh-12.5rem)]" : ""}`}>
-            <div className={`${wishlistProducts.length === 0 ? "w-full flex-1 flex flex-col px-[100px] py-[45px]" : "max-w-6xl mx-auto px-5 sm:px-10 py-20"}`}>
+        <section className={`bg-[#FCFAF7] ${wishlistProducts.length === 0 ? "flex flex-col min-h-[calc(50dvh-6rem)] sm:min-h-[calc(100dvh-12.5rem)]" : ""}`}>
+            <div className={`${wishlistProducts.length === 0 ? "w-full flex-1 flex flex-col px-7 sm:px-12 md:px-[100px] py-6 sm:py-[45px]" : "max-w-6xl mx-auto px-5 sm:px-10 py-20"}`}>
                 {/* Top Section */}
                 {wishlistProducts.length > 0 && (
                     <div className="flex flex-col justify-start">
@@ -126,12 +48,18 @@ const ProductWishlist = () => {
                     <EmptyProducts />
                 ) : (
                     <div className="py-14 sm:py-16 lg:py-20">
+                        <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
+                            <defs>
+                                <clipPath id="figureCardImageClip" clipPathUnits="objectBoundingBox">
+                                    <path d="M0 0 L1 0 L1 0.8158 C1 0.8256 0.9957 0.8347 0.9885 0.8402 C0.8579 0.938 0.6864 1 0.4987 1 C0.3122 1 0.1419 0.9388 0.0117 0.8423 C0.0043 0.8368 0 0.8276 0 0.8178 Z" />
+                                </clipPath>
+                            </defs>
+                        </svg>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full">
                             {wishlistProducts.map((product) => (
-                                <WishlistCard
+                                <ProductCard
                                     key={product._id || product.id}
                                     product={product}
-                                    onRemove={removeFromWishlist}
                                 />
                             ))}
                         </div>

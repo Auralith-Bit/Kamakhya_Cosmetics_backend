@@ -107,10 +107,21 @@ const WhyChooseShine = () => (
         object-fit:contain;display:block;z-index:2;pointer-events:none;}
 
       /* ---- cards 382x139 @ x170/1368, y336/535/734 ---- */
+      /* ✅ BASE SHADOW strengthened + smooth transition + hover shadow */
       .wc-card{position:absolute;width:19.8958vw;height:7.2396vw;background:#fff;
         border-radius:0.5208vw;z-index:3;
-        box-shadow:0 0.4167vw 0.625vw rgba(0,0,0,0.08), 0 1.0417vw 1.3021vw rgba(0,0,0,0.05);
-        display:flex;align-items:center;gap:1.5625vw;padding:0 1.5625vw;}
+        box-shadow:0 0.4167vw 0.8333vw rgba(0,0,0,0.10),
+                   0 1.0417vw 2.0833vw rgba(43,46,126,0.08);
+        display:flex;align-items:center;gap:1.5625vw;padding:0 1.5625vw;
+        transition:box-shadow .3s ease;
+        cursor:pointer;}
+
+      /* ✅ HOVER — dark, wide-spreading shadow, NO movement */
+      .wc-card:hover{
+        box-shadow:0 0.625vw 1.25vw rgba(0,0,0,0.12),
+                   0 1.5625vw 3.125vw rgba(43,46,126,0.20);
+      }
+
       .wc-l1{left:8.8542vw;top:17.5vw;}
       .wc-l2{left:8.8542vw;top:27.8646vw;}
       .wc-l3{left:8.8542vw;top:38.2292vw;}
@@ -135,8 +146,13 @@ const WhyChooseShine = () => (
         .wc-sec{height:auto;display:grid;grid-template-columns:1fr;padding:10vw 5vw;}
 
         /* cards = horizontal rows: icon left, text right; text wraps naturally */
+        /* ✅ px-based base shadow so it reads properly on small screens */
         .wc-card{position:static;width:auto;height:auto;margin-top:3vw;
-          padding:3.5vw 4vw;gap:3.5vw;border-radius:2vw;align-items:center;text-align:left;}
+          padding:3.5vw 4vw;gap:3.5vw;border-radius:2vw;align-items:center;text-align:left;
+          box-shadow:0 2px 6px rgba(0,0,0,0.08),
+                     0 6px 16px rgba(43,46,126,0.08);}
+        .wc-card:hover{box-shadow:0 4px 10px rgba(0,0,0,0.10),
+                                  0 12px 24px rgba(43,46,126,0.18);}
         .wc-card p br{display:none;}   /* ✅ no forced breaks — copy flows responsively */
         .wc-l1,.wc-l2,.wc-l3,.wc-r1,.wc-r2,.wc-r3{left:auto;top:auto;}
 

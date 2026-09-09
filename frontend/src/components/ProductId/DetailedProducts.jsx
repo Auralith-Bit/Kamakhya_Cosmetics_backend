@@ -304,7 +304,7 @@ const ProductDetailed = () => {
         </div>
 
         {/* Info + configurator */}
-        <div className="bg-white rounded-lg p-8 border border-gray-100 shadow-[0_4px_8px_2px_rgba(0,0,0,0.15)]">
+        <div className="bg-white rounded-lg p-8 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.08)]">
           <p className="tracking-widest font-poppins text-[#E38F2E] mb-1 font-semibold">{product.tag}</p>
           <div className='h-0.5 w-20 mb-5 bg-[#E38F2E] rounded-full' />
           <h2 className="text-3xl tracking-wider font-playfair font-bold text-[#2E3192] mb-2">{product.title}</h2>
@@ -440,7 +440,7 @@ const ProductDetailed = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mt-8">
+          <div className="grid grid-cols-2 gap-4 mt-8 max-sm:grid-cols-1">
             <button
               type="button"
               onClick={handleAddToCart}

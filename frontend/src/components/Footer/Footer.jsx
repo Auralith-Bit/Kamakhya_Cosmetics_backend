@@ -157,7 +157,11 @@ const Footer = () => {
           ))}
         </div>
 
-        <hr className="m-0 border-none border-t border-white/35" />
+      
+{/* Divider  */}
+
+      <div className="w-80vw mb-5 h-px bg-[#D9D9D980]" />
+
 
         {/* ── MIDDLE: contact / trade info / newsletter ── */}
         <div className="grid grid-cols-[1.1fr_1fr_1fr] gap-12 py-12 max-lg:grid-cols-1 max-lg:gap-8">
@@ -219,9 +223,14 @@ const Footer = () => {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* ── BOTTOM: copyright + legal links ── */}
-        <div className="flex items-center justify-between border-t border-white/35 py-5 text-[13px] text-muted max-tab:flex-col max-tab:items-start max-tab:gap-3">
+{/* divider  */}
+      <div className="w-full mb-5 h-px bg-[#D9D9D980]" />
+
+      {/* ── BOTTOM: copyright + legal links ── */}
+      <div className="pt-6 pb-10 px-[125px] max-lg:px-8 max-tab:px-5">
+        <div className="flex items-center justify-between text-[13px] text-muted max-tab:flex-col max-tab:items-start max-tab:gap-3">
           <p className="m-0">&copy; {year} Kamakhya Cosmetics Pvt. Ltd. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="/" className="text-muted no-underline transition-colors hover:text-footer-gold">Privacy Policy</a>
@@ -229,7 +238,6 @@ const Footer = () => {
             <a href="/" className="text-muted no-underline transition-colors hover:text-footer-gold">Accessibility</a>
           </div>
         </div>
-
       </div>
     </footer>
   );

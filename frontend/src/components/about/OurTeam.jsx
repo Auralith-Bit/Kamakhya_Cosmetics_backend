@@ -20,9 +20,13 @@ const TEAM = [
 ];
 
 const SCROLL_TEAM = [...TEAM, ...TEAM];
-// eslint-disable-next-line no-unused-vars
-const CARDS_PER_VIEW = 5;
-const TOTAL_PAGES = 2;
+const getCardsPerView = () => {
+  if (typeof window === 'undefined') return 5;
+  const w = window.innerWidth;
+  if (w <= 639) return 1;
+  if (w <= 1023) return 3;
+  return 5;
+};
 
 const ArrowLeft = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -37,7 +41,7 @@ const ArrowRight = () => (
 );
 
 const TeamCard = ({ member, id }) => (
-  <div className="ot-card">
+  <div className="ot-card" data-index={id}>
     <div className="ot-card-inner">
       <svg className="ot-svg" viewBox="0 0 300 360" preserveAspectRatio="none" role="img" aria-label={member.name}>
         <path d={member.shape === 'A' ? SHAPE_A : SHAPE_B} fill={member.bg} />
@@ -58,13 +62,28 @@ const OurTeam = () => {
   const rowRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [cardsPerView, setCardsPerView] = useState(getCardsPerView());
+
+  const totalPages = Math.max(1, Math.ceil(SCROLL_TEAM.length / cardsPerView));
+
+  useEffect(() => {
+    const handleResize = () => {
+      setCardsPerView(getCardsPerView());
+      setActiveIndex((prev) => Math.min(prev, Math.max(1, Math.ceil(SCROLL_TEAM.length / getCardsPerView())) - 1));
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const scrollTo = (index) => {
     if (!rowRef.current || isAnimating) return;
     setIsAnimating(true);
 
     const container = rowRef.current;
-    const scrollToX = index * container.clientWidth;
+    const targetCardIndex = Math.min(index * cardsPerView, container.children.length - 1);
+    const targetCard = container.children[targetCardIndex];
+    const scrollToX = targetCard ? targetCard.offsetLeft : 0;
+
     container.scrollTo({ left: scrollToX, behavior: 'smooth' });
     setActiveIndex(index);
 
@@ -73,13 +92,13 @@ const OurTeam = () => {
 
   const scrollLeft = () => {
     if (isAnimating) return;
-    const nextIndex = activeIndex === 0 ? TOTAL_PAGES - 1 : activeIndex - 1;
+    const nextIndex = activeIndex === 0 ? totalPages - 1 : activeIndex - 1;
     scrollTo(nextIndex);
   };
 
   const scrollRight = () => {
     if (isAnimating) return;
-    const nextIndex = activeIndex === TOTAL_PAGES - 1 ? 0 : activeIndex + 1;
+    const nextIndex = activeIndex === totalPages - 1 ? 0 : activeIndex + 1;
     scrollTo(nextIndex);
   };
 
@@ -87,12 +106,13 @@ const OurTeam = () => {
     const container = rowRef.current;
     if (!container) return;
     const handleScroll = () => {
-      const idx = Math.round(container.scrollLeft / container.clientWidth);
-      setActiveIndex(Math.min(idx, TOTAL_PAGES - 1));
+      const targetCard = container.children[Math.round(container.scrollLeft / (container.children[0]?.offsetWidth || 1))];
+      const idx = Math.floor(Number(targetCard?.dataset.index ?? 0) / cardsPerView);
+      setActiveIndex(Math.min(Math.max(idx, 0), totalPages - 1));
     };
     container.addEventListener('scroll', handleScroll);
     return () => container.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [cardsPerView, totalPages]);
 
   return (
     <section id="our-team" className="ot-sec">
@@ -322,7 +342,7 @@ const OurTeam = () => {
           </button>
 
           <div className="ot-dots">
-            {Array.from({ length: TOTAL_PAGES }).map((_, i) => (
+            {Array.from({ length: totalPages }).map((_, i) => (
               <button
                 key={i}
                 className={`ot-dot ${i === activeIndex ? 'active' : ''}`}
@@ -336,7 +356,7 @@ const OurTeam = () => {
           <button
             className="ot-nav-btn"
             onClick={scrollRight}
-            disabled={activeIndex === TOTAL_PAGES - 1 || isAnimating}
+            disabled={activeIndex === totalPages - 1 || isAnimating}
             aria-label="Next team members"
           >
             <ArrowRight />

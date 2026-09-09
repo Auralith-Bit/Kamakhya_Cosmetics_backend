@@ -1,4 +1,6 @@
 import ProductImg from '../assets/ProductImg.svg'
+import group56 from '../assets/Group 56.svg'
+import intersect from '../assets/Intersect.svg'
 
 export const products = [
     { id: 1, tag: 'ROYAL LUXURY', brand: 'Royal Luxury', category: 'Lip Care', type: 'Featured', image: ProductImg, title: 'Lipstick', desc: 'Lipstick adds vibrant color and confidence to your smile, enhancin...', moq: '300 pcs', lead: '5-7 days' },
@@ -12,10 +14,10 @@ export const products = [
     { id: 9, tag: 'ROYAL LUXURY', brand: 'Royal Luxury', category: 'Face Care', type: 'Featured', image: ProductImg, title: 'Lipstick', desc: 'Lipstick adds vibrant color and confidence to your smile, enhancin...', moq: '300 pcs', lead: '5-7 days' },
     { id: 10, tag: 'ROYAL LUXURY', brand: 'Royal Luxury', category: 'Sun Care', type: 'Featured', image: ProductImg, title: 'Lipstick', desc: 'Lipstick adds vibrant color and confidence to your smile, enhancin...', moq: '300 pcs', lead: '5-7 days' },
     { id: 11, tag: 'ROYAL LUXURY', brand: 'Royal Luxury', category: 'Hair Care', type: 'Featured', image: ProductImg, title: 'Lipstick', desc: 'Lipstick adds vibrant color and confidence to your smile, enhancin...', moq: '300 pcs', lead: '5-7 days' },
-    { id: 12, tag: 'SHINE', brand: 'Shine', category: 'Kitchen & Dishwashing', type: 'Featured', image: ProductImg, title: 'Dish Soap', desc: 'Cuts through grease fast while staying gentle on hands.', moq: '300 pcs', lead: '5-7 days' },
-    { id: 13, tag: 'SHINE', brand: 'Shine', category: 'Glass Cleaners', type: 'Featured', image: ProductImg, title: 'Glass Cleaner', desc: 'Streak-free shine for windows, mirrors, and glass surfaces.', moq: '300 pcs', lead: '5-7 days' },
-    { id: 14, tag: 'SHINE', brand: 'Shine', category: 'Floor and Surface Cleaners', type: 'Featured', image: ProductImg, title: 'Floor Cleaner', desc: 'All-purpose floor cleaner safe for most surfaces.', moq: '300 pcs', lead: '5-7 days' },
-    { id: 15, tag: 'SHINE', brand: 'Shine', category: 'Bathroom Cleaners', type: 'Featured', image: ProductImg, title: 'Bathroom Cleaner', desc: 'Removes soap scum and limescale with ease.', moq: '300 pcs', lead: '5-7 days' },
-    { id: 16, tag: 'SHINE', brand: 'Shine', category: 'Laundry', type: 'Featured', image: ProductImg, title: 'Laundry Detergent', desc: 'Deep-cleans fabrics while keeping colors vibrant.', moq: '300 pcs', lead: '5-7 days' },
+    { id: 12, tag: 'SHINE', brand: 'Shine', category: 'Kitchen & Dishwashing', type: 'Featured', image: group56, title: 'Dish Soap', desc: 'Cuts through grease fast while staying gentle on hands.', moq: '300 pcs', lead: '5-7 days' },
+    { id: 13, tag: 'SHINE', brand: 'Shine', category: 'Glass Cleaners', type: 'Featured', image: intersect, title: 'Glass Cleaner', desc: 'Streak-free shine for windows, mirrors, and glass surfaces.', moq: '300 pcs', lead: '5-7 days' },
+    { id: 14, tag: 'SHINE', brand: 'Shine', category: 'Floor and Surface Cleaners', type: 'Featured', image: group56, title: 'Floor Cleaner', desc: 'All-purpose floor cleaner safe for most surfaces.', moq: '300 pcs', lead: '5-7 days' },
+    { id: 15, tag: 'SHINE', brand: 'Shine', category: 'Bathroom Cleaners', type: 'Featured', image: intersect, title: 'Bathroom Cleaner', desc: 'Removes soap scum and limescale with ease.', moq: '300 pcs', lead: '5-7 days' },
+    { id: 16, tag: 'SHINE', brand: 'Shine', category: 'Laundry', type: 'Featured', image: group56, title: 'Laundry Detergent', desc: 'Deep-cleans fabrics while keeping colors vibrant.', moq: '300 pcs', lead: '5-7 days' },
     { id: 17, tag: 'ROYAL LUXURY', brand: 'Royal Luxury', category: 'Hair Care', type: 'Featured', image: ProductImg, title: 'Lipstick', desc: 'Lipstick adds vibrant color and confidence to your smile, enhancin...', moq: '300 pcs', lead: '5-7 days' },
 ]

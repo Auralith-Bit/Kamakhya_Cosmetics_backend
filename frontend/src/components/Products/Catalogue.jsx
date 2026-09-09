@@ -1,161 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react'
-import { Search, Heart, ArrowRight, Headphones, SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, Headphones, SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { products as staticProducts } from '../../data/product'
 import { getProducts } from '../../api/products'
-import { useWishlist } from '../../context/WishlistContext'
-
-const brands = ['Royal Luxury', 'Shine']
-
-const RoyalCategories = [
-    'Hair Care', 'Face Care', 'Lip Care',
-    'Sun Care', 'Body Care', 'Fragrances'
-]
-
-const ShineCategories = [
-    'Bathroom Cleaners', 'Floor and Surface Cleaners',
-    'Glass Cleaners', 'Kitchen & Dishwashing',
-    'Laundry',
-]
-
-// Maps a brand name to its category list. Used to decide which
-// categories render in the sidebar, and to validate/reset selection
-// whenever the brand changes.
-const categoriesByBrand = {
-    'Royal Luxury': RoyalCategories,
-    'Shine': ShineCategories,
-}
-
-const productTypes = ['Featured', 'Best Seller', 'Signatured Products']
-
-const PRODUCTS_PER_PAGE = 12
-
-/*
-  Single-select filter section.
-  `selected` is a single string (or '' for none), not an array.
-  Clicking an already-selected item deselects it (clears the group).
-  Clicking a different item switches selection to it.
-  Kept as <input type="checkbox"> visually per design, but behaves
-  like a radio group functionally + via aria-checked/role for a11y.
-*/
-
-const FilterSection = ({ title, items, selected, onSelect, emptyMessage }) => (
-    <div className="mb-6" role="radiogroup" aria-label={title}>
-        <h3 className="font-semibold text-gray-800 mb-3">{title}</h3>
-        {items.length === 0 && emptyMessage ? (
-            <p className="text-xs text-gray-400 italic">{emptyMessage}</p>
-        ) : (
-            <div className="space-y-2">
-                {items.map((name) => {
-                    const isChecked = selected === name
-                    return (
-                        <label
-                            key={name}
-                            className="flex items-center justify-between text-sm text-gray-600 cursor-pointer"
-                        >
-                            <span className="flex items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    role="radio"
-                                    aria-checked={isChecked}
-                                    className="rounded border-gray-300"
-                                    checked={isChecked}
-                                    onChange={() => onSelect(name)}
-                                />
-                                {name}
-                            </span>
-                        </label>
-                    )
-                })}
-            </div>
-        )}
-    </div>
-)
-
-const NeedHelpBox = () => (
-    <div className="bg-[#FBF6ED] rounded-2xl p-4 text-center">
-        <div className="w-10 h-10 mx-auto mb-2 rounded-full border border-orange-300 flex items-center justify-center">
-            <Headphones className="w-5 h-5 text-orange-400" />
-        </div>
-        <p className="font-semibold text-gray-800 text-sm mb-1">
-            Need Help?
-        </p>
-        <p className="text-xs text-gray-500 mb-3">
-            We're here for your business sourcing needs.
-        </p>
-        <Link to='/contact' className="border border-orange-300 text-orange-500 text-xs font-medium rounded-full px-4 py-2 inline-block">
-            CONTACT US
-        </Link>
-    </div>
-)
-
-const ProductCard = ({ product }) => {
-    const { isInWishlist, toggleWishlist } = useWishlist()
-    const productId = product._id || product.id
-    const saved = isInWishlist(productId)
-
-    return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group">
-            <div className="relative">
-                <span className="absolute top-3 left-3 bg-white/90 text-[10px] font-semibold tracking-wide px-3 py-1 rounded-full text-[#CCA466]">
-                    {product.tag}
-                </span>
-                {/* Heart button sits above the card-wide Link so it stays independently clickable */}
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        toggleWishlist(productId)
-                    }}
-                    className={`absolute top-3 right-3 z-10 bg-white rounded-full p-1.5 shadow transition-colors ${
-                        saved ? 'text-[#E38F2E]' : 'text-gray-500 hover:text-[#E38F2E]'
-                    }`}
-                    aria-label={saved ? `Remove ${product.title} from wishlist` : `Add ${product.title} to wishlist`}
-                >
-                    <Heart className="w-4 h-4" fill={saved ? 'currentColor' : 'none'} />
-                </button>
-
-                {/* Whole media + text block is clickable, routes to the product detail page */}
-                <Link to={`/products/${productId}`} className="block">
-                    <img
-                        src={product.image}
-                        alt={product.title}
-                        className="w-full h-64 object-cover"
-                    />
-                </Link>
-            </div>
-
-            <div className="p-4">
-                <Link to={`/products/${productId}`}>
-                    <h4 className="text-center font-serif text-gray-800 mb-1 hover:text-[#2E3192] transition">
-                        {product.title}
-                    </h4>
-                </Link>
-                <p className="text-center text-xs text-gray-500 mb-3 line-clamp-2">
-                    {product.desc}
-                </p>
-
-                <div className="flex justify-center gap-6 text-xs text-gray-600 mb-4">
-                    <div className="text-center">
-                        <p className="text-[#CCA466]">MOQ</p>
-                        <p className="font-medium">{product.moq}</p>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-[#CCA466]">Lead Time</p>
-                        <p className="font-medium">{product.lead}</p>
-                    </div>
-                </div>
-
-                <Link
-                    to={`/products/${productId}`}
-                    className="w-full flex items-center justify-center gap-2 border border-[#2E3192] text-[#2E3192] rounded-full py-2 text-sm font-medium hover:bg-[#2E3192] hover:text-white transition"
-                >
-                    View Products
-                    <ArrowRight className="w-4 h-4" />
-                </Link>
-            </div>
-        </div>
-    )
-}
+import ProductCard from './ProductCard'
 
 // Builds a page-number list with ellipsis, e.g. [1, 3, 4, '...', 10]
 const getPageNumbers = (current, total) => {
@@ -186,7 +34,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             <button
                 onClick={() => onPageChange(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 text-gray-500 disabled:opacity-40 disabled:cursor-not-allowed hover:border-[#2E3192] hover:text-[#2E3192] transition"
+                className="w-9 h-9 mr-[100px] flex items-center justify-center rounded-full border border-[#A1A2CE] bg-[#F5F5FA] text-gray-500 disabled:opacity-40 disabled:cursor-not-allowed hover:border-[#2E3192] hover:text-[#2E3192] transition"
                 aria-label="Previous page"
             >
                 <ChevronLeft className="w-4 h-4" />
@@ -201,11 +49,12 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                     <button
                         key={page}
                         onClick={() => onPageChange(page)}
-                        className={`w-9 h-9 flex items-center justify-center rounded-full border text-sm font-medium transition ${
+                        className={`w-9 h-9 cursor-pointer flex items-center justify-center rounded-lg border text-sm font-medium transition ${
                             page === currentPage
-                                ? 'bg-[#2E3192] border-[#2E3192] text-white'
-                                : 'border-gray-200 text-gray-600 hover:border-[#2E3192] hover:text-[#2E3192]'
+                                ? 'bg-[#2E3192] border-[#2E3192] !text-white'
+                                : 'bg-white border-[#7779B8] text-black hover:border-[#2E3192]'
                         }`}
+                        style={{ fontFamily: "'Inter', sans-serif" }}
                     >
                         {page}
                     </button>
@@ -215,7 +64,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             <button
                 onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                className="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 text-gray-500 disabled:opacity-40 disabled:cursor-not-allowed hover:border-[#2E3192] hover:text-[#2E3192] transition"
+                className="w-9 h-9 ml-[100px] flex items-center justify-center rounded-full border border-[#A1A2CE] bg-[#F5F5FA] text-gray-500 disabled:opacity-40 disabled:cursor-not-allowed hover:border-[#2E3192] hover:text-[#2E3192] transition"
                 aria-label="Next page"
             >
                 <ChevronRight className="w-4 h-4" />
@@ -279,6 +128,38 @@ const Catalogue = () => {
     // No brand selected -> empty list (user picks a brand first).
     const currentCategories = selectedBrand ? categoriesByBrand[selectedBrand] || [] : []
 
+    const allProductList = dbProducts.length > 0 ? dbProducts : staticProducts
+
+    // Counts how many products match a given (term, brand, category, type) combo.
+    // An empty string means "no filter for that facet".
+    const countProducts = (term, brand, category, type) =>
+        allProductList.filter((p) =>
+            (p.title || "").toLowerCase().includes(term.toLowerCase()) &&
+            (brand === '' || p.brand === brand) &&
+            (category === '' || p.category === category) &&
+            (type === '' || p.type === type)
+        ).length
+
+    // Facet counts: each option's count respects search + the other sections'
+    // selections, so the numbers reflect what selecting that option would yield.
+    const brandItems = useMemo(() =>
+        brands.map((brand) => ({
+            name: brand,
+            count: countProducts(search, brand, selectedCategory, selectedType),
+        })), [search, selectedCategory, selectedType])
+
+    const categoryItems = useMemo(() =>
+        currentCategories.map((category) => ({
+            name: category,
+            count: countProducts(search, selectedBrand, category, selectedType),
+        })), [search, selectedBrand, currentCategories, selectedType])
+
+    const typeItems = useMemo(() =>
+        productTypes.map((type) => ({
+            name: type,
+            count: countProducts(search, selectedBrand, selectedCategory, type),
+        })), [search, selectedBrand, selectedCategory])
+
     // Toggles a single-select group: clicking the active value clears it,
     // clicking a new value replaces whatever was selected before.
     const makeSelectHandler = (setter) => (value) => {
@@ -308,8 +189,6 @@ const Catalogue = () => {
 
     const activeFilterCount =
         (selectedBrand ? 1 : 0) + (selectedCategory ? 1 : 0) + (selectedType ? 1 : 0)
-
-    const allProductList = dbProducts.length > 0 ? dbProducts : staticProducts
 
     const filteredProducts = useMemo(() => {
         let result = allProductList.filter((p) => {
@@ -353,6 +232,13 @@ const Catalogue = () => {
 
     return (
         <div className="flex flex-col sticky lg:flex-row gap-6 px-5 sm:px-10 lg:px-20 py-8 bg-[#FCF9F2] min-h-screen">
+            <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
+                <defs>
+                    <clipPath id="figureCardImageClip" clipPathUnits="objectBoundingBox">
+                        <path d="M0 0 L1 0 L1 0.8158 C1 0.8256 0.9957 0.8347 0.9885 0.8402 C0.8579 0.938 0.6864 1 0.4987 1 C0.3122 1 0.1419 0.9388 0.0117 0.8423 C0.0043 0.8368 0 0.8276 0 0.8178 Z" />
+                    </clipPath>
+                </defs>
+            </svg>
             {/* Sidebar */}
             <aside className="w-full lg:w-64 shrink-0 bg-white rounded-2xl p-5 h-fit lg:ml-4">
                 <button
@@ -360,7 +246,7 @@ const Catalogue = () => {
                     className="w-full flex items-center justify-between lg:hidden"
                 >
                     <span className="flex items-center gap-2 font-semibold text-gray-800">
-                        <SlidersHorizontal className="w-4 h-4" />
+                        <SlidersHorizontal className="w-4 h-4 font-playfair " />
                         Filter By
                         {activeFilterCount > 0 && (
                             <span className="bg-[#2E3192] text-white text-[10px] rounded-full px-2 py-0.5">
@@ -403,13 +289,13 @@ const Catalogue = () => {
                                 setCurrentPage(1)
                             }}
                             placeholder="Search catalogue"
-                            className="w-full bg-gray-50 border border-gray-200 rounded-full pl-9 pr-3 py-2 text-sm focus:outline-none"
+                            className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none"
                         />
                     </div>
 
                     <FilterSection
                         title="Brand"
-                        items={brands}
+                        items={brandItems}
                         selected={selectedBrand}
                         onSelect={handleBrandSelect}
                     />
@@ -419,7 +305,7 @@ const Catalogue = () => {
                         Nothing selected yet -> prompt the user to pick a brand first. */}
                     <FilterSection
                         title="Category"
-                        items={currentCategories}
+                        items={categoryItems}
                         selected={selectedCategory}
                         onSelect={handleCategorySelect}
                         emptyMessage="Select a brand to see its categories"
@@ -427,7 +313,7 @@ const Catalogue = () => {
 
                     <FilterSection
                         title="Product Type"
-                        items={productTypes}
+                        items={typeItems}
                         selected={selectedType}
                         onSelect={handleTypeSelect}
                     />

@@ -112,12 +112,16 @@ const BrandPhilosophy = () => (
         top:17.8958vw;
         display:flex;
         gap:2.0833vw;
+        align-items:stretch;   /* ✅ all cards share the tallest card's height */
       }
 
       .bp-card{
         position:relative;
         width:12.5vw;
-        height:14.65vw;
+        /* ✅ FIX: height → min-height so content can never be squashed;
+           the row still stretches all cards to equal height */
+        min-height:14.65vw;
+        height:auto;
         background:#FBFBFD;
         border:0.0521vw solid #ECECF2;
         border-radius:0.625vw;
@@ -138,7 +142,10 @@ const BrandPhilosophy = () => (
       .bp-corner.br{bottom:0;right:0;transform:rotate(180deg);}
       .bp-card > :not(.bp-corner){position:relative;}
 
+      /* ✅ FIX: flex-shrink:0 on every block → icon/title/rule/text keep their
+         exact sizes and therefore sit at identical vertical levels in all cards */
       .bp-cico{
+        flex-shrink:0;
         width:3.8vw;height:3.8vw;border-radius:50%;
         border:0.1042vw solid #C9A063;color:#E38F2E;background:#fff;
         display:grid;place-items:center;
@@ -146,12 +153,14 @@ const BrandPhilosophy = () => (
       .bp-cico svg{width:1.9vw;height:1.9vw;}
 
       .bp-ctitle{
+        flex-shrink:0;
         color:#333333;font-family:${serif};font-size:1.02vw;font-weight:700;
         margin-top:0.85vw;line-height:1.2;
       }
-      .bp-crule{width:2.8vw;height:0.14vw;background:#C9A063;
+      .bp-crule{flex-shrink:0;width:2.8vw;height:0.14vw;background:#C9A063;
         margin-top:0.6vw;border-radius:0.0781vw;}
       .bp-ctxt{
+        flex-shrink:0;
         color:#666666;font-family:${sans};font-size:0.74vw;line-height:1.19vw;
         margin-top:0.7vw;
       }
@@ -212,7 +221,8 @@ const BrandPhilosophy = () => (
 
         .bp-cards{position:static;left:auto;top:auto;flex-direction:column;
           align-items:center;gap:4vw;grid-column:1;grid-row:2;margin-top:6vw;}
-        .bp-card{width:70%;max-width:380px;height:auto;padding:4.5vw 3.5vw;border-radius:2.5vw;}
+        .bp-card{width:70%;max-width:380px;height:auto;min-height:0;
+          padding:4.5vw 3.5vw;border-radius:2.5vw;}
         .bp-card:hover{box-shadow:0 12px 24px rgba(43,46,126,0.14);}
         .bp-cico{width:clamp(44px, 10vw, 58px);height:clamp(44px, 10vw, 58px);}
         .bp-cico svg{width:clamp(20px, 5vw, 27px);height:clamp(20px, 5vw, 27px);}
@@ -282,8 +292,8 @@ const BrandPhilosophy = () => (
       ))}
     </div>
 
-    {/* ✅ EXPLORE OUR COLLECTION → /products */}
-    <Link to="/products" className="bp-btn">
+    {/* ✅ EXPLORE OUR COLLECTION → /products?brand=Shine */}
+    <Link to="/products?brand=Shine" className="bp-btn">
       EXPLORE OUR COLLECTION
       <svg viewBox="0 0 9 14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
         <path d="m1.5 1.5 6 5.5-6 5.5" />

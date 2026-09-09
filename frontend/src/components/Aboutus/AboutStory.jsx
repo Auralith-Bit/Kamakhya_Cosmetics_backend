@@ -7,7 +7,7 @@ const AboutStory = () => {
     <section
       id="about-story"
       aria-label="About Us - Our Story"
-      className="w-full bg-white py-[85px] flex items-center box-border max-sm:py-10 overflow-hidden"
+      className="w-full bg-white py-[85px] flex items-center box-border max-sm:py-10 overflow-x-hidden"
     >
       <div className="w-full px-[125px] max-lg:px-8 max-sm:px-5 grid grid-cols-2 items-center gap-[70px] max-nav:grid-cols-1 max-nav:gap-9">
         
@@ -54,11 +54,11 @@ const AboutStory = () => {
           <div className="flex items-center mt-[10px]">
             <Link
               to="/about"
-              className="inline-flex items-center justify-center gap-2 w-[200px] h-[48px] bg-brand-blue border-[3px] border-navy-700 rounded-[7px] text-white font-body text-[12px] font-bold tracking-[1px] no-underline uppercase cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:bg-navy-700 hover:border-navy-800 hover:shadow-[0_6px_20px_rgba(46,49,146,0.3)] active:translate-y-0"
+              className="inline-flex items-center justify-center gap-2 w-[210px] h-[48px] bg-brand-blue border-[3px] border-navy-700 rounded-[7px] text-white font-body text-[12px] font-bold tracking-[1px] no-underline uppercase cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:bg-navy-700 hover:border-navy-800 hover:shadow-[0_6px_20px_rgba(46,49,146,0.3)] active:translate-y-0 overflow-visible"
             >
               READ THE STORY
-              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 18l6-6-6-6" />
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0, verticalAlign:'middle'}}>
+                <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </Link>
           </div>
