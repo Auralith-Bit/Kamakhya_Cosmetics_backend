@@ -444,14 +444,17 @@ const ProductDetailed = () => {
             <button
               type="button"
               onClick={handleAddToCart}
-              className={`flex items-center justify-center font-poppins text-white text-xs rounded-lg py-3 px-4 font-semibold transition-all text-center cursor-pointer active:scale-95 border-none shadow-sm ${
+              style={{ color: '#ffffff' }}
+              className={`flex items-center justify-center font-poppins !text-white text-xs rounded-lg py-3 px-4 font-semibold transition-all text-center cursor-pointer active:scale-95 border-none shadow-sm ${
                 addedToast
                   ? 'bg-emerald-600 hover:bg-emerald-700'
                   : 'bg-[#2E3192] hover:bg-[#252775]'
               }`}
             >
-              <ShoppingBag className="w-4 h-4 mr-2 shrink-0" />
-              {addedToast ? 'Added to Order ✓' : 'Add to Order'}
+              <ShoppingBag className="w-4 h-4 mr-2 shrink-0 text-white" style={{ color: '#ffffff' }} />
+              <span style={{ color: '#ffffff' }}>
+                {addedToast ? 'Added to Order ✓' : 'Add to Order'}
+              </span>
             </button>
             <Link
               to="/checkout"

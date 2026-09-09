@@ -5,6 +5,90 @@ import { products as staticProducts } from '../../data/product'
 import { getProducts } from '../../api/products'
 import ProductCard from './ProductCard'
 
+const brands = ['Royal Luxury', 'Shine']
+
+const RoyalCategories = [
+    'Hair Care', 'Face Care', 'Lip Care',
+    'Sun Care', 'Body Care',
+]
+
+const ShineCategories = [
+    'Bathroom Cleaners', 'Floor and Surface Cleaners',
+    'Glass Cleaners', 'Kitchen & Dishwashing',
+    'Laundry',
+]
+
+// Maps a brand name to its category list. Used to decide which
+// categories render in the sidebar, and to validate/reset selection
+// whenever the brand changes.
+const categoriesByBrand = {
+    'Royal Luxury': RoyalCategories,
+    'Shine': ShineCategories,
+}
+
+const productTypes = ['Featured', 'Best Seller', 'Signatured Products']
+
+const PRODUCTS_PER_PAGE = 12
+
+/*
+  Single-select filter section.
+  `selected` is a single string (or '' for none), not an array.
+  Clicking an already-selected item deselects it (clears the group).
+  Clicking a different item switches selection to it.
+  Kept as <input type="checkbox"> visually per design, but behaves
+  like a radio group functionally + via aria-checked/role for a11y.
+*/
+const FilterSection = ({ title, items, selected, onSelect, emptyMessage }) => (
+    <div className="mb-6" role="radiogroup" aria-label={title}>
+        <h3 className="font-semibold text-gray-800 mb-3">{title}</h3>
+        {items.length === 0 && emptyMessage ? (
+            <p className="text-xs text-gray-400 italic">{emptyMessage}</p>
+        ) : (
+            <div className="space-y-2">
+                {items.map(({ name, count }) => {
+                    const isChecked = selected === name
+                    return (
+                        <label
+                            key={name}
+                            className="flex items-center justify-between text-sm text-gray-600 cursor-pointer"
+                        >
+                            <span className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    role="radio"
+                                    aria-checked={isChecked}
+                                    className="rounded border-gray-300"
+                                    checked={isChecked}
+                                    onChange={() => onSelect(name)}
+                                />
+                                {name}
+                            </span>
+                            <span className="text-xs font-medium text-[#2E3192]">({count})</span>
+                        </label>
+                    )
+                })}
+            </div>
+        )}
+    </div>
+)
+
+const NeedHelpBox = () => (
+    <div className="bg-[#FBF6ED] rounded-2xl p-4 text-center">
+        <div className="w-10 h-10 mx-auto mb-2 rounded-full border border-orange-300 flex items-center justify-center">
+            <Headphones className="w-5 h-5 text-orange-400" />
+        </div>
+        <p className="font-semibold text-gray-800 text-sm mb-1">
+            Need Help?
+        </p>
+        <p className="text-xs text-gray-500 mb-3">
+            We're here for your business sourcing needs.
+        </p>
+        <Link to='/contact-us' className="border border-orange-300 text-orange-500 text-xs font-medium rounded-full px-4 py-2">
+            CONTACT US
+        </Link>
+    </div>
+)
+
 // Builds a page-number list with ellipsis, e.g. [1, 3, 4, '...', 10]
 const getPageNumbers = (current, total) => {
     if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1)

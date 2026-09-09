@@ -43,9 +43,10 @@ const OrderSummaryCard = () => {
             <button
               type="button"
               onClick={() => navigate('/products')}
-              className="inline-flex items-center justify-center px-5 py-2.5 bg-[#2E3192] text-white text-xs font-semibold rounded-lg hover:bg-[#252775] transition cursor-pointer border-none"
+              style={{ color: '#ffffff' }}
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-[#2E3192] !text-white text-xs font-semibold rounded-lg hover:bg-[#252775] transition cursor-pointer border-none"
             >
-              Browse Products
+              <span style={{ color: '#ffffff' }}>Browse Products</span>
             </button>
           </div>
         ) : (

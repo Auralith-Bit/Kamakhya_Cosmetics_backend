@@ -35,7 +35,6 @@ const PlayIcon = () => (
     <path d="M8 5.5v13l11-6.5Z" />
   </svg>
 );
->>>>>>> origin/main
 
 const FEATURES = [
   { Icon: IconFlask,  label: "Advanced\nManufacturing" },
